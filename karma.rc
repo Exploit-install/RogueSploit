@@ -47,14 +47,12 @@ set SRVPORT 465
 run
 
 use auxiliary/server/fakedns
-set TARGETDOMAIN *
-set TARGETHOST 10.0.0.1
+unset TARGETHOST
 set SRVPORT 5353
 run
 
 use auxiliary/server/fakedns
-set TARGETDOMAIN *
-set TARGETHOST 10.0.0.1
+unset TARGETHOST
 set SRVPORT 53
 run
 
