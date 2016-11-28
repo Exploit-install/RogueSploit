@@ -1,3 +1,4 @@
+db_disconnect
 db_connect postgres:toor@127.0.0.1/msfbook
 
 use auxiliary/server/browser_autopwn
