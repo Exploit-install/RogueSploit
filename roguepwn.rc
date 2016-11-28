@@ -85,10 +85,9 @@ set AUTOPWN_PORT 80
 set AUTOPWN_URI /
 
 set MAXEXPLOITCOUNT 25
-HTML::base64 => double_pad #obfuscation
+set HTML::base64 => double_pad
 set MaxSessionCount 20
 set ShowExploitList true
-set LHOST 10.0.0.1
 set LPORT 45000
 set SRVHOST 10.0.0.1
 set SRVPORT 80
