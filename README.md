@@ -1,12 +1,12 @@
-# RogueAP-Autopwn (still in developement)
+# RogueSploit (still in developement)
 Script for start a Rogue AP with dhcpd and dns redirection to browser autopwn url
 
 
 
 ##############################################################################################################
-#                                     FAKE AP AUTOPWN w/ KARMA                                               #
+#                                        ROGUESPLOIT                                                         #
 #                                        by _B4ckp0r7                                                        #
-#This is a simple script for creating a fake access point with dhcpd configuration, dns redirections, sniffing and browser_autopwn1 (i'll upgrade to 2nd soon)             #
+#This is a simple script for creating a fake access point with dhcpd configuration, dns redirections, sniffing and browser_autopwn1 (i'm going to upgrade to 2nd soon)                                                          #
 #                      PLEASE USE ONLY FOR LEGAL | AUTHORIZED | STUDY PURPOSES                               #
 ##############################################################################################################
 Thanks to:
