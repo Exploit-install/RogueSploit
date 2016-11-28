@@ -21,7 +21,10 @@ blue='\e[1;34m'
 #Checking
 [[ `id -u` -eq 0 ]] || { echo -e "\e[31mMust be root to run script"; exit 1; }
 resize -s 33 84 > /dev/null
-service apache2 stop
+pkill dhcpd
+pkill airbase-ng
+airmon-ng stop wlan1mon
+ifconfig at0 down
 clear
 
 
@@ -35,6 +38,10 @@ clear
 echo -e $red"--<[!] (Ctrl + C ) Detected, Trying To Exit... [!]>--"
 sleep 1
 echo ""
+pkill dhcpd
+pkill airbase-ng
+airmon-ng stop wlan1mon
+ifconfig at0 down
 echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
 sleep 1
 echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
@@ -56,6 +63,7 @@ echo ""
 echo -n "Press any key to continue .............."
 read warning
 
+#starting the pwning
 autopwning () {
 	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
 	touch /var/lib/dhcp/dhcpd.leases
