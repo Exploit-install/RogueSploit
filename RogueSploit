@@ -21,10 +21,14 @@ blue='\e[1;34m'
 #Checking
 [[ `id -u` -eq 0 ]] || { echo -e "\e[31mMust be root to run script"; exit 1; }
 resize -s 33 84 > /dev/null
+echo -e $white" [!] RUNNING SERVICES [!]"
 pkill dhcpd
 pkill airbase-ng
 airmon-ng stop wlan1mon
 ifconfig at0 down
+sleep 3
+echo -ne $red"Press any key to continue... "
+read starting
 clear
 
 
@@ -81,6 +85,7 @@ echo -e $lightgreen"       2. Start Pwning Services"
 echo -e $lightgreen"       3. Start WiFi Massive Jammer"
 echo -e $lightgreen"       4. Credits"
 echo -e $lightgreen"       5. Exit"
+echo -e $lightgreen"       6. TUTORIAL"
 echo -ne $yellow"root@B4ckp0r7:"; read answer1
 
 if test $answer1 == '1'
@@ -127,6 +132,17 @@ elif test $answer1 == '5'
 	sleep 2
 	clear
 	exit
+elif test $answer1 == '6'
+	then
+	echo -e $white" TUTORIAL FOR ROGUESPLOIT"
+	echo -e $yellow" 1) OPEN 2 DIFFERENT TERMINALS;"
+	echo -e $yellow" 2) START THE SCRIPT AND SELECT ROGUE AP (Option 1) ON FIRST TERMINAL;"
+	echo -e $yellow" 3) IN THE SECOND TERMINAL SELECT PWNING SERVICES (Option 2)"
+	echo -e $yellow" 4) THEN JUST WAIT FOR SOMEONE CONNECTING TO YOURE AP AND THEY WILL BE REDIRECTED TO YOUR LOCAL BROWSER_AUTOWPN SERVER!"
+	echo -e $yellow" 5) ENJOY!"
+	echo -ne $yellow"Press any key to continue..."
+	read continuos
+	menu
 else
 		echo -e $red"[!]  Incorrect Number  [!]"
 		echo -n -e $yellow"  Do you want exit? ( Yes / No ) :"
@@ -160,6 +176,7 @@ echo -e $lightgreen"       2. Start Pwning Services"
 echo -e $lightgreen"       3. Start WiFi Massive Jammer"
 echo -e $lightgreen"       4. Credits"
 echo -e $lightgreen"       5. Exit"
+echo -e $lightgreen"       6. TUTORIAL"
 echo -ne $yellow"root@B4ckp0r7:"; read answer1
 
 if test $answer1 == '1'
@@ -205,6 +222,17 @@ elif test $answer1 == '5'
 	sleep 2
 	clear
 	exit
+elif test $answer1 == '6'
+	then
+	echo -e $white" TUTORIAL FOR ROGUEPLOIT"
+	echo -e $yellow" 1) OPEN 2 DIFFERENT TERMINALS;"
+	echo -e $yellow" 2) START THE SCRIPT AND SELECT ROGUE AP (Option 1) ON FIRST TERMINAL;"
+	echo -e $yellow" 3) IN THE SECOND TERMINAL SELECT PWNING SERVICES (Option 2)"
+	echo -e $yellow" 4) THEN JUST WAIT FOR SOMEONE CONNECTING TO YOURE AP AND THEY WILL BE REDIRECTED TO YOUR LOCAL BROWSER_AUTOWPN SERVER!"
+	echo -e $yellow" 5) ENJOY!"
+	echo -ne $yellow"Press any key to continue..."
+	read continuos
+	menu
 else
 		echo -e $red"[!]  Incorrect Number  [!]"
 		echo -n -e $yellow"  Do you want exit? ( Yes / No ) :"
