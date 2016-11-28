@@ -72,7 +72,7 @@ autopwning () {
 	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
 	touch /var/lib/dhcp/dhcpd.leases
 	dhcpd -cf dhcpd.conf at0
-	msfconsole -q -r $(pwd)/karma.rc
+	msfconsole -q -r $(pwd)/roguepwn.rc
 }
 
 #menu1
