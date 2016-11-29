@@ -99,7 +99,7 @@ if test $answer1 == '1'
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
 	sudo airmon-ng start wlan1
-	sudo airbase-ng -P -C 30 -e "$nameap" -v wlan1mon
+	sudo airbase-ng -e "$nameap" -v wlan1mon
 	menu
 elif test $answer1 == '2'
 	then
@@ -190,7 +190,7 @@ if test $answer1 == '1'
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
 	sudo airmon-ng start wlan1
-	sudo airbase-ng -P -C 30 -e "$nameap" -v wlan1mon
+	sudo airbase-ng -e "$nameap" -v wlan1mon
 	menu
 elif test $answer1 == '2'
 	then
