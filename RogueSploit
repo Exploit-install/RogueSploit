@@ -49,7 +49,7 @@ ifconfig at0 down
 echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
 sleep 1
 echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
-echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
+echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
 exit
 }
 
