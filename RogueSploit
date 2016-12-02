@@ -139,7 +139,7 @@ elif test $answer1 == '2'
 			ifconfig at0 down
 			sleep 1
 			echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
-			echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
+			echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
 			sleep 2
 			clear
 			exit
@@ -264,7 +264,7 @@ elif test $answer1 == '2'
 			ifconfig at0 down
 			sleep 1
 			echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
-			echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
+			echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
 			sleep 2
 			clear
 			exit
