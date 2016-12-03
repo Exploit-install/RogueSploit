@@ -3,7 +3,7 @@
 #                                     FAKE AP AUTOPWN w/ KARMA                                               #
 #                                        by _B4ckp0r7                                                        #
 #This is a simple script for creating a fake access point with                                               #
-#dhcpd configuration, dns redirections, sniffing and browser_autopwn1 (i'll upgrade to 2nd soon)             #
+#dhcpd configuration, dns redirections, sniffing and browser_autopwn1 and 2 too                              #
 ##############################################################################################################
 
 #colors
@@ -153,7 +153,7 @@ elif test $answer1 == '2'
 	fi
 elif test $answer1 == '3'
 	then
-	xterm -title "Wifi Massive Jammer" -fa monaco -bg black -e "./wifijammer.py"
+	python wifijammer.py
 	menu	
 elif test $answer1 == '4'
 	then
@@ -280,7 +280,7 @@ elif test $answer1 == '2'
 	fi
 elif test $answer1 == '3'
 	then
-	xterm -title "Wifi Massive Jammer" -fa monaco -bg black -e "./wifijammer.py"
+	python wifijammer.py
 	menu	
 elif test $answer1 == '4'
 	then
