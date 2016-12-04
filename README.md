@@ -1,26 +1,23 @@
-# RogueSploit (still in developement)
-Script for start a Rogue AP with dhcpd and dns redirection to browser autopwn url
+#RogueSploit, A WiFi Social Trap (Still in developement)
 
+***
+RogueSploit is an open source automated script made to create a Fake Acces Point, with dhcpd server, dns spoofing and browser_autopwn1 or autopwn2.
 
+#ONLY FOR LEGAL / AUTHORIZED / STUDY purposes
 
-##############################################################################################################
-#                                        ROGUESPLOIT                                                         #
-#                                        by _B4ckp0r7                                                        #
-#This is a simple script to creating a fake access point with dhcpd configuration, dns redirections, sniffing and browser_autopwn1 and the 2nd too)                                                                            #
-#                      PLEASE USE ONLY FOR LEGAL | AUTHORIZED | STUDY PURPOSES                               #
-##############################################################################################################
-Thanks to:
-My friends;
-QuantumSec;
-And averyone who ever supported me;
+***
 
-#TUTORIAL ROGUESPLOT:
-#1) OPEN 2 DIFFERENT TERMINALS;
-#2) START THE SCRIPT AND SELECT ROGUE AP (Option 1) ON FIRST TERMINAL;
-#3) IN THE SECOND TERMINAL SELECT PWNING SERVICES (Option 2)
-#4) THEN JUST WAIT FOR SOMEONE CONNECTING TO YOURE AP AND THEY WILL BE REDIRECTED TO YOUR LOCAL BROWSER_AUTOWPN SERVER!
-#5) ENJOY!
+What you need:
+- Aricrack-ng Suite (Airmon-ng, Aircrack-ng, Airodump-ng, etc..)
+- dhcpd server
+- Metasploit Framework
+- Browser Exploitation Framework [BeEF] (soon)
+- dnsmasq
+- GNU / Linux based Operating Sistem
+- All dependencies needed (try using "apt-get -f install")
+- External Wireless Interface
 
-I INTEGRATED A TOOL FOR A MASSIVE DEAUTHENTICATION NAMED WIFIJAMMER!
-HOPING YOU'LL LIKE THIS SIMPLE&NICE SCRIPT =)
-FOR ANY ISSUE OR HELP JUST WRITE TO ME INTO ISSUE PAGE.
+***
+
+Enjoy!!
+I am not responsible for the use or the damage done
