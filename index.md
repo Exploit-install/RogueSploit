@@ -11,11 +11,11 @@ What you need:
 - Aricrack-ng Suite (Airmon-ng, Aircrack-ng, Airodump-ng, etc..)
 - dhcpd server
 - Metasploit Framework
-- Browser Exploitation Framework [BeEF] (soon)
+- Browser Exploitation Framework (soon)
 - dnsmasq
 - GNU / Linux based Operating Sistem
-- All dependencies needed (try using "apt-get -f install")
-- External Wireless Interface
+- All dependencies needed (try using if probems "apt-get -f install" or install manually)
+- External Wireless Interface like TP-Link TL-WN722N
 
 ***
 
