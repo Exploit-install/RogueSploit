@@ -75,13 +75,25 @@ read warning
 #starting the pwning
 
 autopwning1 () {
+	pkill dhcpd
 	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
+	iptables -F
+	iptables -t nat -F
+	iptables -t mangle -F
+	iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+	iptables -A FORWARD -i wlan1 -j ACCEPT
 	touch /var/lib/dhcp/dhcpd.leases
 	dhcpd -cf dhcpd.conf at0
 	msfconsole -r $(pwd)/roguepwn1.rc
 }
 autopwning2 () {
+	pkill dhcpd
 	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
+	iptables -F
+	iptables -t nat -F
+	iptables -t mangle -F
+	iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+	iptables -A FORWARD -i wlan1 -j ACCEPT
 	touch /var/lib/dhcp/dhcpd.leases
 	dhcpd -cf dhcpd.conf at0
 	msfconsole -r $(pwd)/roguepwn2.rc
@@ -98,6 +110,7 @@ echo -e $lightgreen"       3. Start WiFi Massive Jammer"
 echo -e $lightgreen"       4. Credits"
 echo -e $lightgreen"       5. Exit"
 echo -e $lightgreen"       6. TUTORIAL"
+echo -e $green"       7. Update wit Git"
 echo -ne $yellow"root@roguesploit:"; read answer1
 
 if test $answer1 == '1'
@@ -192,27 +205,33 @@ elif test $answer1 == '6'
 	echo -ne $yellow"Press any key to continue..."
 	read continuos
 	menu
+elif test $answer1 == '7'
+	then
+	echo -ne
+	cd ../ && sudo rm -rf RogueSploit/
+	git clone http://github.com/b4ckp0r7/RogueSploit.git
+	exit
 else
-		echo -e $red"[!]  Incorrect Number  [!]"
-		echo -n -e $yellow"  Do you want exit? ( Yes / No ) :"
-		read back
-		if [ $back != 'n' ] && [ $back != 'N' ] && [ $back != 'No' ]
-			then
-			echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
-			pkill dhcpd
-			pkill airmon-ng
-			pkill airbase-ng
-			ifconfig at0 down
-			sleep 1
-			echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
-			echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
-			sleep 2
-			clear
-			exit
-		elif [ $back != 'y' ] && [ $back != 'Y' ] && [ $back != 'Yes' ]
-			then
-			menu
-		fi
+	echo -e $red"[!]  Incorrect Number  [!]"
+	echo -n -e $yellow"  Do you want exit? ( Yes / No ) :"
+	read back
+	if [ $back != 'n' ] && [ $back != 'N' ] && [ $back != 'No' ]
+		then
+		echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
+		pkill dhcpd
+		pkill airmon-ng
+		pkill airbase-ng
+		ifconfig at0 down
+		sleep 1
+		echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
+		echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
+		sleep 2
+		clear
+		exit
+	elif [ $back != 'y' ] && [ $back != 'Y' ] && [ $back != 'Yes' ]
+		then
+		menu
+	fi
 fi
 }
 #menu2
@@ -320,25 +339,31 @@ elif test $answer1 == '6'
 	echo -ne $yellow"Press any key to continue..."
 	read continuos
 	menu
+elif test $answer1 == '7'
+	then
+	echo -ne
+	cd ../ && sudo rm -rf RogueSploit/
+	git clone http://github.com/b4ckp0r7/RogueSploit.git
+	exit
 else
-		echo -e $red"[!]  Incorrect Number  [!]"
-		echo -n -e $yellow"  Do you want exit? ( Yes / No ) :"
-		read back
-		if [ $back != 'n' ] && [ $back != 'N' ] && [ $back != 'No' ]
-			then
-			echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
-			pkill dhcpd
-			pkill airmon-ng
-			pkill airbase-ng
-			ifconfig at0 down
-			sleep 1
-			echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
-			echo -e $yellow"--<[*] Thank You For Using Roguesploit B) [*]>--"
-			sleep 2
-			clear
-			exit
-		elif [ $back != 'y' ] && [ $back != 'Y' ] && [ $back != 'Yes' ]
-			then
-			menu
-		fi
+	echo -e $red"[!]  Incorrect Number  [!]"
+	echo -n -e $yellow"  Do you want exit? ( Yes / No ) :"
+	read back
+	if [ $back != 'n' ] && [ $back != 'N' ] && [ $back != 'No' ]
+		then
+		echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
+		pkill dhcpd
+		pkill airmon-ng
+		pkill airbase-ng
+		ifconfig at0 down
+		sleep 1
+		echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
+		echo -e $yellow"--<[*] Thank You For Using Roguesploit B) [*]>--"
+		sleep 2
+		clear
+		exit
+	elif [ $back != 'y' ] && [ $back != 'Y' ] && [ $back != 'Yes' ]
+		then
+		menu
+	fi
 fi
