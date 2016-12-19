@@ -244,6 +244,7 @@ echo -e $lightgreen"       3. Start WiFi Massive Jammer"
 echo -e $lightgreen"       4. Credits"
 echo -e $lightgreen"       5. Exit"
 echo -e $lightgreen"       6. TUTORIAL"
+echo -e $green"       7. Update wit Git"
 echo -ne $yellow"root@roguesploit: "; read answer1
 
 if test $answer1 == '1'
