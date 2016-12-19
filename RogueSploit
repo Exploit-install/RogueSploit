@@ -207,10 +207,18 @@ elif test $answer1 == '6'
 	menu
 elif test $answer1 == '7'
 	then
-	echo -ne
-	cd ../ && sudo rm -rf RogueSploit/
-	git clone http://github.com/b4ckp0r7/RogueSploit.git
-	exit
+	echo -ne $red"This update will delete everything in this directory, continue anyway? [y/N] "; tput sgr0
+	read cancel
+	if [ $cancel == 'y' ] && [ $cancel == 'Y' ]
+		then
+		cd ../ && sudo rm -rf RogueSploit/
+		git clone http://github.com/b4ckp0r7/RogueSploit.git
+		sudo chmod 777 RogueSploit/* -R
+		exit
+	else
+	echo -e $red"Update aborted! Returning main menu in 5 secs!"
+	sleep 5
+	menu
 else
 	echo -e $red"[!]  Incorrect Number  [!]"
 	echo -n -e $yellow"  Do you want exit? ( Yes / No ) :"
@@ -342,10 +350,18 @@ elif test $answer1 == '6'
 	menu
 elif test $answer1 == '7'
 	then
-	echo -ne
-	cd ../ && sudo rm -rf RogueSploit/
-	git clone http://github.com/b4ckp0r7/RogueSploit.git
-	exit
+	echo -ne $red"This update will delete everything in this directory, continue anyway? [y/N] "; tput sgr0
+	read cancel
+	if [ $cancel == 'y' ] && [ $cancel == 'Y' ]
+		then
+		cd ../ && sudo rm -rf RogueSploit/
+		git clone http://github.com/b4ckp0r7/RogueSploit.git
+		sudo chmod 777 RogueSploit/* -R
+		exit
+	else
+	echo -e $red"Update aborted! Returning main menu in 5 secs!"
+	sleep 5
+	menu
 else
 	echo -e $red"[!]  Incorrect Number  [!]"
 	echo -n -e $yellow"  Do you want exit? ( Yes / No ) :"
