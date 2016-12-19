@@ -1,0 +1,8 @@
+title: Roguesploit
+description: RogueSploit, A WiFi Social Trap
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-hacker
+
+gems:
+  - jekyll-mentions

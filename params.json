@@ -1,6 +1,0 @@
-{
-  "name": "Roguesploit",
-  "tagline": "RogueSploit, A WiFi Social Trap",
-  "body": "#RogueSploit, A WiFi Social Trap (Still in developement)\r\n\r\n***\r\nRogueSploit is an open source automated script made to create a Fake Acces Point, with dhcpd server, dns spoofing and browser_autopwn1 or autopwn2.\r\n\r\n#ONLY FOR LEGAL / AUTHORIZED / STUDY purposes\r\n\r\n***\r\n\r\nWhat you need:\r\n- Aricrack-ng Suite (Airmon-ng, Aircrack-ng, Airodump-ng, etc..)\r\n- dhcpd server\r\n- Metasploit Framework\r\n- Browser Exploitation Framework [BeEF] (soon)\r\n- dnsmasq\r\n- GNU / Linux based Operating Sistem\r\n- All dependencies needed (try using \"apt-get -f install\")\r\n- External Wireless Interface\r\n\r\n***\r\n\r\nEnjoy!!\r\nI am not responsible for the use or the damage done",
-  "note": "Don't delete this file! It's used internally to help with page regeneration."
-}
