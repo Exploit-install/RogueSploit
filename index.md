@@ -17,7 +17,6 @@ What you need:
 - All dependencies needed (try using if probems "apt-get -f install" or install manually)<br />
 - External Wireless Interface like TP-Link TL-WN722N<br />
 - Zenity<br />
-***
 
 Enjoy!!
 I am not responsible for the use or the damage done
