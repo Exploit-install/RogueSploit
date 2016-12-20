@@ -12,8 +12,8 @@ What you need:
 - dhcpd server<hr />
 - Metasploit Framework<hr />
 - Browser Exploitation Framework (to do)<hr />
-- dnsmasq\<hr />
-- GNU / Linux based Operating Sistem\<hr />
+- dnsmasq<hr />
+- GNU / Linux based Operating Sistem<hr />
 - All dependencies needed (try using if probems "apt-get -f install" or install manually)<hr />
 - External Wireless Interface like TP-Link TL-WN722N<hr />
 - Zenity<hr />
