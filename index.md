@@ -8,15 +8,15 @@ RogueSploit is an open source automated script made to create a Fake Acces Point
 ***
 
 What you need:
-- Aricrack-ng Suite (Airmon-ng, Aircrack-ng, Airodump-ng, etc..)<hr />
-- dhcpd server<hr />
-- Metasploit Framework<hr />
-- Browser Exploitation Framework (to do)<hr />
-- dnsmasq<hr />
-- GNU / Linux based Operating Sistem<hr />
-- All dependencies needed (try using if probems "apt-get -f install" or install manually)<hr />
-- External Wireless Interface like TP-Link TL-WN722N<hr />
-- Zenity<hr />
+- Aricrack-ng Suite (Airmon-ng, Aircrack-ng, Airodump-ng, etc..)<br />
+- dhcpd server<br />
+- Metasploit Framework<br />
+- Browser Exploitation Framework (to do)<br />
+- dnsmasq<br />
+- GNU / Linux based Operating Sistem<br />
+- All dependencies needed (try using if probems "apt-get -f install" or install manually)<br />
+- External Wireless Interface like TP-Link TL-WN722N<br />
+- Zenity<br />
 ***
 
 Enjoy!!
