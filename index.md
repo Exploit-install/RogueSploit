@@ -14,13 +14,12 @@ RogueSploit is an open source automated script made to create a Fake Acces Point
 ***
 
 What you need:
-- Aricrack-ng Suite [https://github.com/aircrack-ng/aircrack-ng]<br />
-- dhcpd server<br />
+- Aircrack-ng Suite [https://github.com/aircrack-ng/aircrack-ng]<br />
+- Dhcpd server<br />
 - Metasploit Framework [https://github.com/rapid7/metasploit-framework]<br />
 - Browser Exploitation Framework [https://github.com/beefproject/beef]<br />
 - dnsmasq<br />
 - GNU / Linux based Operating Sistem [https://kali.org]<br />
-- All dependencies needed (try using if probems "apt-get -f install" or install manually)<br />
 - External Wireless Interface like TP-Link TL-WN722N<br />
 - Zenity<br />
 - MITMF [https://github.com/byt3bl33d3r/MITMf]
