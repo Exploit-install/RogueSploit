@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "[*]Starting the BeEF Framework and Panel..."
+echo "[*]Go to http://<IP>:3000/ui/panel for control BeEF"
+echo "[*]More infos will appear right now..."
+cd /usr/share/beef-xss/
+./beef
