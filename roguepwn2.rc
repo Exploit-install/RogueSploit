@@ -2,7 +2,7 @@ use auxiliary/server/browser_autopwn2
 set MAXEXPLOITCOUNT 30
 set HTML::base64 double_pad
 set MaxSessionCount 20
-set ShowExploitList true
+set VERBOSE true
 set LPORT 45000
 set SRVHOST 10.0.0.1
 set SRVPORT 8081
