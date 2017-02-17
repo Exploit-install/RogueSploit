@@ -27,7 +27,7 @@ What you need:
 
 ***
 
-<h1> DISCLAIMER </h1></hr>
+<h1> DISCLAIMER </h1>
 
 ***
 <h3><b><u>RogueSploit is intended to be used for legal security purposes only, and you should only use it to protect networks/hosts you own or have permission to test. Any other use is not the responsibility of the developer. Be sure that you understand and are complying with the RogueSploit licenses and laws in your area. In other words, don't be stupid, don't be an asshole, and use this tool responsibly and legally.</u></b></h3>
