@@ -121,8 +121,8 @@ autopwning2 () {
 
 #Correct Mitmf installation
 mitmf_install () {
-	echo -ne $blue"["$yellow"?"$blue"] "$yellow"Do you want to correctly install MITMF? "$blue"["$yellow"*"$blue"]";
-	read mitans
+	echo -ne $blue"["$yellow"?"$blue"] "$yellow"Do you want to correctly install MITMF? (y/n)"$blue"["$yellow"*"$blue"]\n";
+	echo -ne $yellow"mitmf"$white"@"$red"install"$white"# "; read mitans
 	if [ $mitans != 'n' ] && [ $mitans != 'N' ] && [ $mitans != 'No' ]
 		then
 		apt-get remove mitmf
@@ -130,7 +130,7 @@ mitmf_install () {
 		cd $HOME && git clone https://github.com/byt3bl33d3r/MITMf
 		cd $HOME/MITMf && git submodule init && git submodule update --recursive
 		cd $HOME/MITMf && pip install -r requirements.txt
-		cat << "EOF > /usr/bin/mitmf
+		cat << "EOF" > /usr/bin/mitmf
 #!/bin/bash
 cd $HOME/MITMf/ && sudo python mitmf.py "$@"
 EOF
@@ -139,8 +139,6 @@ EOF
 		sudo pip install Twisted==15.5.0
 		sleep 2
 		echo -e $green"[*] DONE [*]"
-	elif [ $back != 'y' ] && [ $back != 'Y' ] && [ $back != 'Yes' ]
-		then
 	fi
 }
 #BeEF w/ Mitmf's js url injection
