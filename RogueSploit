@@ -40,7 +40,7 @@ msfdb start
 msfd
 pkill dhcpd
 pkill airbase-ng
-iptales -F
+iptables -F
 airmon-ng stop wlan1mon
 sleep 3
 
