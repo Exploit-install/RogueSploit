@@ -1,7 +1,9 @@
 #!/bin/bash
-
 echo "[*]Starting the BeEF Framework and Panel..."
-echo "[*]Go to http://<IP>:3000/ui/panel for control BeEF"
+echo "[*]Go to http://10.0.0.1:3000/ui/panel for control BeEF"
 echo "[*]More infos will appear right now..."
-cd /usr/share/beef-xss/
-./beef
+echo "[*]Login is:"
+echo "[!]User: RogueSploit"
+echo "[!]Password: pwnonair"
+cd /usr/share/beef-xss/ && sudo ruby beef
+
