@@ -1055,7 +1055,7 @@ elif test $answer1 == '7'
 	read cancel
 	if [ $cancel != 'n' ] && [ $cancel != 'N' ]
 		then
-		sleep 0.7 & echo -e $yellow"[!] Making backup of old version (you can found it  $HOME/RogeBackup/)[!]"
+		sleep 0.7 & echo -e $yellow"[!] Making backup of old version (you can found it in $HOME/RogueBackup/)[!]"
 		rm -rf $HOME/RogueBackup
 		mkdir $HOME/RogueBackup
 		cp $0 $HOME/RogueBackup/RogueSploitOld.backup
@@ -1099,7 +1099,7 @@ elif test $answer1 == '7'
 		chmod +x $HOME/RogueSploit/* -R
 		echo -e $green" Updated successfully! Restarting the script to apply the changes ..."
 		sleep 3
-		exec $0
+		exec ./RogueSploit
 		exit
 	elif [ $cancel != 'y' ] && [ $cancel != 'Y' ]
 		then
@@ -1258,7 +1258,7 @@ elif test $answer1 == '7'
 	read cancel
 	if [ $cancel != 'n' ] && [ $cancel != 'N' ]
 		then
-		sleep 0.7 & echo -e $yellow"[!] Making backup of old version (you can found it  $HOME/RogeBackup/)[!]"
+		sleep 0.7 & echo -e $yellow"[!] Making backup of old version (you can found it in $HOME/RogueBackup/)[!]"
 		rm -rf $HOME/RogueBackup
 		mkdir $HOME/RogueBackup
 		cp $0 $HOME/RogueBackup/RogueSploitOld.backup
@@ -1302,7 +1302,7 @@ elif test $answer1 == '7'
 		chmod +x $HOME/RogueSploit/* -R
 		echo -e $green" Updated successfully! Restarting the script to apply the changes ..."
 		sleep 3
-		exec $0
+		exec ./RogueSploit
 		exit
 	elif [ $cancel != 'y' ] && [ $cancel != 'Y' ]
 		then
