@@ -1,5 +1,5 @@
 #RogueSploit, A Powerfull WiFi Social Trap
-
+<h2>FOR A CORRECT USE, PLEASE INSTALL INTO /root/ DIR!!</h2>
 ***
 RogueSploit is an open source automated script made to create a Fake Acces Point, with dhcpd server, dns spoofing, host redirection, browser_autopwn1 or autopwn2 or beef+mitmf.
 ***
