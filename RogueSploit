@@ -5,9 +5,11 @@
 # This is a simple script for creating a fake access point with                                              #
 # dhcpd configuration, dns redirections, sniffing and browser_autopwn1 and 2 too                             #
 # [!] To do list [!]                                                                                         #
-# - Add BeEF;                                                                                                #
-# - Add Mitmf;                                                                                               #
+# - Add BeEF;[DONE]                                                                                          #
+# - Add Mitmf;[DONE]                                                                                         #
 # - Add BDFProxy;                                                                                            #
+# - Add SeToolkit;                                                                                           #
+# - Use hostapd for fakeap                                                                                   #
 # - Pwn someone                                                                                              #
 ##############################################################################################################
 
@@ -937,11 +939,10 @@ echo -e $yellow"--<"$blue"[*]"$yellow" Welcome $myname, this is Roguesploit v0.3
 echo -e $lightgreen"--<[?] What do you want to do? [?]>-- ";
 echo -e $lightgreen"       1. Start RogueAP"
 echo -e $lightgreen"       2. Start Pwning Services"
-echo -e $lightgreen"       3. Start WiFi Massive Jammer"
-echo -e $lightgreen"       4. Credits"
-echo -e $lightgreen"       5. Exit"
-echo -e $lightgreen"       6. TUTORIAL"
-echo -e $yellow"       7. Update wit Git"
+echo -e $lightgreen"       3. Credits"
+echo -e $lightgreen"       4. Exit"
+echo -e $lightgreen"       5. TUTORIAL"
+echo -e $yellow"       6. Update wit Git"
 echo -ne $yellow"$myname@roguesploit:"; read answer1
 
 if test $answer1 == '1'
@@ -1007,14 +1008,8 @@ elif test $answer1 == '2'
 			then
 			menu
 		fi
-	fi
+	fi	
 elif test $answer1 == '3'
-	then
-	clear
-	echo -e $cyan"Starting massive jamming as you ordered!"
-	python wifijammer.py
-	menu	
-elif test $answer1 == '4'
 	then
 	clear
 	echo -e "Made by B4ckP0r7 with love, Italian Engeering"
@@ -1027,7 +1022,7 @@ elif test $answer1 == '4'
 	echo -e $blue" Press any key to continue... "
 	read continuee
 	menu
-elif test $answer1 == '5'
+elif test $answer1 == '4'
 	then
 	clear
 	pkill dnsmasq
@@ -1039,7 +1034,7 @@ elif test $answer1 == '5'
 	sleep 2
 	clear
 	exit
-elif test $answer1 == '6'
+elif test $answer1 == '5'
 	then
 	clear
 	echo -e $white" TUTORIAL FOR ROGUESPLOIT"
@@ -1051,7 +1046,7 @@ elif test $answer1 == '6'
 	echo -ne $yellow"Press any key to continue..."
 	read continuos
 	menu
-elif test $answer1 == '7'
+elif test $answer1 == '6'
 	then
 	echo -ne $red"[!!] This update will delete everything in this directory, continue anyway? [y/N] "; tput sgr0
 	read cancel
@@ -1140,11 +1135,10 @@ echo -e $yellow"--<"$blue"[*]"$yellow" Welcome $myname, this is Roguesploit v0.3
 echo -e $lightgreen"--<[?] What do you want to do? [?]>-- ";
 echo -e $lightgreen"       1. Start RogueAP"
 echo -e $lightgreen"       2. Start Pwning Services"
-echo -e $lightgreen"       3. Start WiFi Massive Jammer"
-echo -e $lightgreen"       4. Credits"
-echo -e $lightgreen"       5. Exit"
-echo -e $lightgreen"       6. TUTORIAL"
-echo -e $yellow"       7. Update wit Git"
+echo -e $lightgreen"       3. Credits"
+echo -e $lightgreen"       4. Exit"
+echo -e $lightgreen"       5. TUTORIAL"
+echo -e $yellow"       6. Update wit Git"
 echo -ne $yellow"$myname@roguesploit:"; read answer1
 
 if test $answer1 == '1'
@@ -1214,12 +1208,6 @@ elif test $answer1 == '2'
 elif test $answer1 == '3'
 	then
 	clear
-	echo -e $cyan"Starting massive jamming as you ordered!"
-	python wifijammer.py
-	menu	
-elif test $answer1 == '4'
-	then
-	clear
 	echo -e "Made by B4ckP0r7 with love, Italian Engeering"
 	echo -e $blue"   Big thanks to:"
 	echo -e $lightgreen"--<[ $myname, a fantastic user! ]>--"
@@ -1230,7 +1218,7 @@ elif test $answer1 == '4'
 	echo -e $blue" Press any key to continue... "
 	read continuee
 	menu
-elif test $answer1 == '5'
+elif test $answer1 == '4'
 	then
 	clear
 	pkill dnsmasq
@@ -1242,7 +1230,7 @@ elif test $answer1 == '5'
 	sleep 2
 	clear
 	exit
-elif test $answer1 == '6'
+elif test $answer1 == '5'
 	then
 	clear
 	echo -e $white" TUTORIAL FOR ROGUESPLOIT"
@@ -1254,7 +1242,7 @@ elif test $answer1 == '6'
 	echo -ne $yellow"Press any key to continue..."
 	read continuos
 	menu
-elif test $answer1 == '7'
+elif test $answer1 == '6'
 	then
 	echo -ne $red"[!!] This update will delete everything in this directory, continue anyway? [y/N] "; tput sgr0
 	read cancel
