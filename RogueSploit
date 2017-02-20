@@ -145,8 +145,10 @@ EOF
 		chmod 777 /usr/bin/mitmf
 		sudo pip uninstall Twisted
 		sudo pip install Twisted==15.5.0
-		sleep 2
+		sleep 0.8
+		cd $HOME/RogueSploit
 		echo -e $lightgreen"[*] DONE [*]"
+		sleep 3
 	fi
 }
 #BeEF w/ Mitmf's js url injection
