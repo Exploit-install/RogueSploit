@@ -1017,7 +1017,7 @@ elif test $answer1 == '3'
 elif test $answer1 == '4'
 	then
 	clear
-	echo -e "Made by B4ckP0r7 with love, Italian Engeering" | lolcat
+	echo -e "Made by B4ckP0r7 with love, Italian Engeering"
 	echo -e $blue"   Big thanks to:"
 	echo -e $lightgreen"--<[ $myname, a fantastic user! ]>--"
 	echo -e $red"--<[ My friends ]>--"
@@ -1220,7 +1220,7 @@ elif test $answer1 == '3'
 elif test $answer1 == '4'
 	then
 	clear
-	echo -e "Made by B4ckP0r7 with love, Italian Engeering" | lolcat
+	echo -e "Made by B4ckP0r7 with love, Italian Engeering"
 	echo -e $blue"   Big thanks to:"
 	echo -e $lightgreen"--<[ $myname, a fantastic user! ]>--"
 	echo -e $red"--<[ My friends ]>--"
