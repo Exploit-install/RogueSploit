@@ -933,7 +933,7 @@ zenity --info --title="[*] WELCOME TO ROGUESPLOIT $myname [*]" --text="I am not 
 #menu1
 menu () {
 clear
-echo -e $yellow"--<"$blue"[*]"$yellow" Welcome $myname, this is Roguesploit -- by _B4ckp0r7 "$blue"[*]"$yellow">--"
+echo -e $yellow"--<"$blue"[*]"$yellow" Welcome $myname, this is Roguesploit v0.3 -- by _B4ckp0r7 "$blue"[*]"$yellow">--"
 echo -e $lightgreen"--<[?] What do you want to do? [?]>-- ";
 echo -e $lightgreen"       1. Start RogueAP"
 echo -e $lightgreen"       2. Start Pwning Services"
@@ -1136,7 +1136,7 @@ welcome
 clear
 mitmf_install
 clear
-echo -e $yellow"--<"$blue"[*]"$yellow" Welcome $myname, this is Roguesploit -- by _B4ckp0r7 "$blue"[*]"$yellow">--"
+echo -e $yellow"--<"$blue"[*]"$yellow" Welcome $myname, this is Roguesploit v0.3 -- by _B4ckp0r7 "$blue"[*]"$yellow">--"
 echo -e $lightgreen"--<[?] What do you want to do? [?]>-- ";
 echo -e $lightgreen"       1. Start RogueAP"
 echo -e $lightgreen"       2. Start Pwning Services"
@@ -1333,5 +1333,4 @@ else
 		menu
 	fi
 fi
-
 
