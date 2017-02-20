@@ -24,6 +24,8 @@ What you need:
 - GNU / Linux based Operating Sistem [https://kali.org]<hr />
 - External Wireless Interface like TP-Link TL-WN722N<hr />
 - Zenity<hr />
+- Hostapd<hr />
+- Social Engineer Toolkit [https://github.com/trustedsec/social-engineer-toolkit]<hr />
 - MITMF [https://github.com/byt3bl33d3r/MITMf]
 
 ***
