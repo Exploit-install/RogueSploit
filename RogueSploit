@@ -13,11 +13,6 @@
 # - Pwn someone                                                                                              #
 # - Add notification to update on startup; [DONE]                                                            #
 ##############################################################################################################
-
-
-rm $PWD/roguesploit.log
-DATE=$(date)
-echo $DATE
 #colors
 cyan='\e[0;36m'
 green='\e[0;34m'
@@ -27,6 +22,31 @@ white='\e[1;37m'
 red='\e[1;31m'
 yellow='\e[1;33m'
 blue='\e[1;34m'
+#Exit application
+trap ctrl_c INT
+ctrl_c () {
+echo -e $red"["$yellow"!"$red"]"$yellow"Ctrl + C Detected, Exiting..."$red"["$yellow"!"$red"]"
+sleep 1
+echo -e $red"["$yellow"!"$red"]"$yellow"Closing and killing applications..."$red"["$yellow"!"$red"]"
+sleep 2
+pkill dns*
+pkill dnsmasq
+pkill dhcpd
+pkill hostapd
+pkill airmon-ng
+pkill airbase-ng
+service network-manager restart
+service hostapd restart
+sleep 1
+echo -e $red"["$lightgreen"*"$red"]"$lightgreen"DONE"$red"["$lightgreen"*"$red"]"
+echo -e $red"["$yellow"!"$red"]"$yellow"Thanks for using "$lightgreen"RogueSploit"$yellow", $myname B)"$red"["$yellow"!"$red"]"
+sleep 1
+echo -e $red"["$yellow"!"$red"]"$yellow"Pwn the the dummies!"$red"["$yellow"!"$red"]"
+sleep 2
+clear
+exit
+}
+
 #Checking
 [[ `id -u` -eq 0 ]] || { echo -e "\e[31mMust be root to run script"; exit 1; }
 resize -s 33 84 > /dev/null
@@ -42,13 +62,6 @@ msfd
 pkill dhcpd
 pkill airbase-ng
 iptables -F
-
-#Saving Logs
-LOG_FILE=$PWD/roguesploit.log
-exec > >(tee -a ${LOG_FILE} )
-exec 2> >(tee -a ${LOG_FILE} >&2)
-echo $DATE > $PWD/roguesploit.log
-
 
 #Rogue ON
 rogueon () {
@@ -1101,9 +1114,13 @@ else
 	if [ $back != 'n' ] && [ $back != 'N' ] && [ $back != 'No' ]
 		then
 		echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
+		pkill dnsmasq
 		pkill dhcpd
+		pkill hostapd
 		pkill airmon-ng
 		pkill airbase-ng
+		service network-manager restart
+		service hostapd restart
 		sleep 1
 		echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
 		echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
@@ -1313,9 +1330,13 @@ else
 	if [ $back != 'n' ] && [ $back != 'N' ] && [ $back != 'No' ]
 		then
 		echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
+		pkill dnsmasq
 		pkill dhcpd
+		pkill hostapd
 		pkill airmon-ng
 		pkill airbase-ng
+		service network-manager restart
+		service hostapd restart
 		sleep 1
 		echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
 		echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
