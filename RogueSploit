@@ -25,6 +25,8 @@ blue='\e[1;34m'
 #Exit application
 trap ctrl_c INT
 ctrl_c () {
+clear
+sleep 0.5
 echo -e $red"["$yellow"!"$red"]"$yellow"Ctrl + C Detected, Exiting..."$red"["$yellow"!"$red"]"
 sleep 1
 echo -e $red"["$yellow"!"$red"]"$yellow"Closing and killing applications..."$red"["$yellow"!"$red"]"
